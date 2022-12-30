@@ -64,3 +64,12 @@ int collides(Shape currentShape,Point nextStep ,Shape *fallenShapes, int fallenC
     return 0;
 }
 
+void rotate(Shape *shape){
+    for(int i = 0; i < 4; i++){
+        Point cube = shape->cubes[i];
+        cube.x = -cube.y;
+        cube.y = cube.x;
+    }
+}
+
+

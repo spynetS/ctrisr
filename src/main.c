@@ -52,6 +52,7 @@ int main(){
     while(1){
         if(!collides(*currentShape, newPoint(0,1), &fallenShapes[0], fallenCount)){
             currentShape->pos.y++;
+            rotate(currentShape);
         }else{
             fallenShapes[fallenCount] = *currentShape;
             fallenCount++;
