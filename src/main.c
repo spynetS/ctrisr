@@ -137,6 +137,14 @@ int main(){
                 currentShape->pos.x++;
             }
             else if(key == 'w'){
+                // if shape collides when rotate move it either right or left
+                while(rotateCollide(*currentShape)){
+                    if(currentShape->pos.x < 5){
+                        currentShape->pos.x++;
+                    }else{
+                        currentShape->pos.x--;
+                    }
+                }
                 rotate(currentShape);
             }
             else{

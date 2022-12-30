@@ -72,4 +72,11 @@ void rotate(Shape *shape){
     }
 }
 
+int rotateCollide(Shape shape){
+    Shape *shape_p = &shape; 
+    rotate(shape_p);
+    return collides(*shape_p, newPoint(0,0),NULL, 0);
+}
+
+
 
