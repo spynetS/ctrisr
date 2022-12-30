@@ -1,8 +1,11 @@
 #include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
 typedef struct {
     int x;
     int y;
+    char *color;
 } Point;
 
 typedef struct {
@@ -15,6 +18,7 @@ Point newPoint(int x, int y){
     Point point;
     point.x = x;
     point.y = y;
+    point.color = malloc(sizeof(char)*11);
     return point;
 }
 
@@ -23,14 +27,79 @@ Shape *newShape(int x, int y, int type){
     Shape *shape = malloc(sizeof(Shape));
     shape->pos = newPoint(x,y);
     
-    /* Point cubes[4] = {newPoint(-1,0),newPoint(0,0),newPoint(1,0),newPoint(2,0)}; */
-    /* Point cubes[4] = {newPoint(-1,1),newPoint(0,1),newPoint(0,0),newPoint(1,1)}; */
-    /* Point cubes[4] = {newPoint(-1,0),newPoint(0,0),newPoint(1,0),newPoint(1,-1)}; */
-    Point cubes[4] = {newPoint(-1,0),newPoint(0,0),newPoint(1,0),newPoint(2,0)};
-    for(int i = 0; i < 4;i++){
-        shape->cubes[i] = cubes[i];
-    }
 
+    //memset(shape->color, 0, sizeof(shape->color));
+    //I
+    if(type == 0){
+        shape->cubes[0] = newPoint(-1,0);
+        shape->cubes[1] = newPoint(0,0);
+        shape->cubes[2] = newPoint(1,0);
+        shape->cubes[3] = newPoint(2,0);
+        for(int i = 0; i < 4; i++){
+            strcpy(shape->cubes[i].color, "\033[0;36m");
+        }
+    }
+    //l
+    if(type == 1){
+        shape->cubes[0] = newPoint(-1,0);
+        shape->cubes[1] = newPoint(0,0);
+        shape->cubes[2] = newPoint(1,0);
+        shape->cubes[3] = newPoint(1,1);
+        for(int i = 0; i < 4; i++){
+            strcpy(shape->cubes[i].color, "\033[31;1m");
+        }
+    }
+    
+    //J
+    if(type == 2){
+        shape->cubes[0] = newPoint(-1,-1);
+        shape->cubes[1] = newPoint(-1,0);
+        shape->cubes[2] = newPoint(0,0);
+        shape->cubes[3] = newPoint(1,0);
+        for(int i = 0; i < 4; i++){
+            strcpy(shape->cubes[i].color, "\033[0;34m");
+        }
+    }
+    //t
+    if(type == 3){
+        shape->cubes[0] = newPoint(0,0);
+        shape->cubes[1] = newPoint(-1,0);
+        shape->cubes[2] = newPoint(0,1);
+        shape->cubes[3] = newPoint(1,0);
+        for(int i = 0; i < 4; i++){
+            strcpy(shape->cubes[i].color, "\033[0;35m");
+        }
+    }
+    //o
+    if(type == 4){
+        shape->cubes[0] = newPoint(0,0);
+        shape->cubes[1] = newPoint(1,1);
+        shape->cubes[2] = newPoint(0,1);
+        shape->cubes[3] = newPoint(1,0);
+        for(int i = 0; i < 4; i++){
+            strcpy(shape->cubes[i].color, "\033[0;33m");
+        }
+    }
+    //s
+    if(type == 5){
+        shape->cubes[0] = newPoint(-1,0);
+        shape->cubes[1] = newPoint(0,0);
+        shape->cubes[2] = newPoint(0,1);
+        shape->cubes[3] = newPoint(1,1);
+        for(int i = 0; i < 4; i++){
+            strcpy(shape->cubes[i].color, "\033[0;32m");
+        }
+    }
+    //z
+    if(type == 6){
+        shape->cubes[0] = newPoint(-1,1);
+        shape->cubes[1] = newPoint(0,1);
+        shape->cubes[2] = newPoint(1,0);
+        shape->cubes[3] = newPoint(0,0);
+        for(int i = 0; i < 4; i++){
+            strcpy(shape->cubes[i].color, "\033[0;31m");
+        }
+    }
     return shape;
 }
 /**
@@ -78,5 +147,8 @@ int rotateCollide(Shape shape){
     return collides(*shape_p, newPoint(0,0),NULL, 0);
 }
 
-
-
+void renderPoint(Point point){
+    printf("%s▄ ", point.color);
+    /* printf("%s■ ", point.color); */
+    printf("\033[0m");
+}

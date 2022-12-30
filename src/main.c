@@ -1,4 +1,6 @@
+#ifndef t
 #include<stdio.h>
+#endif
 #include "shapes.c"
 #include <time.h>
 #include <errno.h>
@@ -16,29 +18,29 @@ Shape *currentShape;
 int msleep(long msec);
 
 void renderScore(){
-    printf("████████████\n");
-    printf("█  Score   █\n");
+    printf("███████████████████████\n");
+    printf("█         Score       █\n");
 
     if(score < 10){
-        printf("█     %d    █\n",score);
+        printf("█          %d          █\n",score);
     }
     else if(score >= 100)
     {
-        printf("█   %d    █\n",score);
+        printf("█         %d         █\n",score);
     }
     else if(score >= 10)
     {
-        printf("█    %d    █\n",score);
+        printf("█          %d         █\n",score);
     }
-    printf("█          █\n");
-    printf("████████████\n");
+    printf("█                     █\n");
+    printf("███████████████████████\n");
 }
 
 void renderWorld(Shape *currentShape){
     system("clear");
     renderScore();
     for(int y = 0; y < HEIGHT; y++){
-        printf("█");
+        printf("█ ");
         for(int x = 0; x < WIDTH; x++){
             //render current shape
             int at = 0;
@@ -46,7 +48,8 @@ void renderWorld(Shape *currentShape){
                 Point cube = currentShape->cubes[i];
                 if( currentShape->pos.x+cube.x == x &&
                         currentShape->pos.y+cube.y == y){
-                    printf("■");
+
+                    renderPoint(cube);
                     at = 1;
                 }
             }
@@ -54,16 +57,16 @@ void renderWorld(Shape *currentShape){
                 Point cube = fallenCubes[j];
                 if( cube.x == x &&
                         cube.y == y){
-                    printf("■");
+                    renderPoint(cube);
                     at = 1;
                 }
             }
             if(!at)
-                printf("·");
+                printf(". ");
         }
         printf("█\n");
     }
-    printf("█■■■■■■■■■■█\n");
+    printf("███████████████████████\n");
 }
 //check all rows if they are full and return the amount of rows that are full
 // start at buttom, can stop when a row is empty
@@ -112,7 +115,7 @@ int removeFullRow(){
                 if(fallenCubes[c].y < r){
                     fallenCubes[c].y++; 
                 }
-                renderWorld(currentShape);
+                //renderWorld(currentShape);
             }
             r++;
         }
@@ -127,6 +130,7 @@ int main(){
 
     while(1){
         score += removeFullRow()*10;
+
         renderWorld(currentShape);
         char key = getchar();
         if(!collides(*currentShape, newPoint(0,1), &fallenCubes[0], fallenCount)){
@@ -159,7 +163,8 @@ int main(){
                 fallenCubes[fallenCount] = newCube;
                 fallenCount++;
             }
-            currentShape = newShape(5,5,0);
+            int number = (rand() % (5 - 0 + 1)) + 0;
+            currentShape = newShape(5,5,number);
         }
         printf("\n");
         
