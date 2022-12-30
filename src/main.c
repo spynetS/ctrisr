@@ -8,13 +8,26 @@
 
 Point fallenCubes[WIDTH*HEIGHT]; // all places 
 int fallenCount = 0;
+int score;
+
 
 Shape *currentShape;
 
 int msleep(long msec);
 
+void renderScore(){
+    printf(" ------------ \n");
+    printf("|   score    |\n");
+    printf("    %d     \n",score);
+    printf("|            |\n");
+    printf(" ------------ \n");
+}
+
 void renderWorld(Shape *currentShape){
+    
+    renderScore();
     for(int y = 0; y < HEIGHT; y++){
+        printf("  ");
         for(int x = 0; x < WIDTH; x++){
             //render current shape
             int at = 0;
@@ -68,8 +81,9 @@ void renderWorld(Shape *currentShape){
 
 
 
-void removeFullRow(){
+int removeFullRow(){
     int count = 0;
+    int rows = 0;
     for(int r = 20; r >= 0; r--){
         count = 0; 
         for(int c = 0; c < fallenCount; c++){ // hehe c++ hehe
@@ -79,6 +93,7 @@ void removeFullRow(){
         }
         if(count == 10){
             //remove chars
+            rows++;
             for(int c = 0; c < fallenCount; c++){ // hehe c++ hehe
                 if(fallenCubes[c].y == r){
                     renderWorld(currentShape);
@@ -96,6 +111,7 @@ void removeFullRow(){
             r++;
         }
     }
+    return rows;
 }
 
 int main(){
@@ -104,7 +120,8 @@ int main(){
     int x = 8;
 
     while(1){
-        removeFullRow();
+        score += removeFullRow()*10;
+        renderWorld(currentShape);
         char key = getchar();
         if(!collides(*currentShape, newPoint(0,1), &fallenCubes[0], fallenCount)){
             if(key == 'a' && !collides(*currentShape,newPoint(-1,0),&fallenCubes[0],fallenCount)){
