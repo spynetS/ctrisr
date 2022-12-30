@@ -8,7 +8,7 @@
 
 Point fallenCubes[WIDTH*HEIGHT]; // all places 
 int fallenCount = 0;
-int score;
+int score = 1;
 
 
 Shape *currentShape;
@@ -16,18 +16,29 @@ Shape *currentShape;
 int msleep(long msec);
 
 void renderScore(){
-    printf(" ------------ \n");
-    printf("|   score    |\n");
-    printf("    %d     \n",score);
-    printf("|            |\n");
-    printf(" ------------ \n");
+    printf("████████████\n");
+    printf("█  Score   █\n");
+
+    if(score < 10){
+        printf("█     %d    █\n",score);
+    }
+    else if(score >= 100)
+    {
+        printf("█   %d    █\n",score);
+    }
+    else if(score >= 10)
+    {
+        printf("█    %d    █\n",score);
+    }
+    printf("█          █\n");
+    printf("████████████\n");
 }
 
 void renderWorld(Shape *currentShape){
-    
+    system("clear");
     renderScore();
     for(int y = 0; y < HEIGHT; y++){
-        printf("  ");
+        printf("█");
         for(int x = 0; x < WIDTH; x++){
             //render current shape
             int at = 0;
@@ -35,11 +46,7 @@ void renderWorld(Shape *currentShape){
                 Point cube = currentShape->cubes[i];
                 if( currentShape->pos.x+cube.x == x &&
                         currentShape->pos.y+cube.y == y){
-                    if(cube.x == 0 && cube.y == 0){
-                        printf("o");
-                    }else{
-                        printf("x");
-                    }
+                    printf("■");
                     at = 1;
                 }
             }
@@ -47,17 +54,16 @@ void renderWorld(Shape *currentShape){
                 Point cube = fallenCubes[j];
                 if( cube.x == x &&
                         cube.y == y){
-                    printf("@");
+                    printf("■");
                     at = 1;
                 }
-                
             }
             if(!at)
-                printf("-");
+                printf("·");
         }
-
-        printf("\n");
+        printf("█\n");
     }
+    printf("█■■■■■■■■■■█\n");
 }
 //check all rows if they are full and return the amount of rows that are full
 // start at buttom, can stop when a row is empty

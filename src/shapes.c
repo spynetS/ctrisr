@@ -25,8 +25,8 @@ Shape *newShape(int x, int y, int type){
     
     /* Point cubes[4] = {newPoint(-1,0),newPoint(0,0),newPoint(1,0),newPoint(2,0)}; */
     /* Point cubes[4] = {newPoint(-1,1),newPoint(0,1),newPoint(0,0),newPoint(1,1)}; */
-    Point cubes[4] = {newPoint(-1,0),newPoint(0,0),newPoint(1,0),newPoint(1,-1)};
-    /* Point cubes[4] = {newPoint(-1,0),newPoint(-1,0),newPoint(-1,0),newPoint(-1,0)}; */
+    /* Point cubes[4] = {newPoint(-1,0),newPoint(0,0),newPoint(1,0),newPoint(1,-1)}; */
+    Point cubes[4] = {newPoint(-1,0),newPoint(0,0),newPoint(1,0),newPoint(2,0)};
     for(int i = 0; i < 4;i++){
         shape->cubes[i] = cubes[i];
     }
@@ -41,7 +41,6 @@ int collides(Shape currentShape,Point nextStep ,Point *fallenCubes, int fallenCo
     currentShape.pos.y += nextStep.y;
     currentShape.pos.x += nextStep.x;
     
-    
     for(int sc = 0; sc < 4; sc++){ // for every cube in currentShape shape cube
 
         Point shapeCube = currentShape.cubes[sc]; 
@@ -53,7 +52,7 @@ int collides(Shape currentShape,Point nextStep ,Point *fallenCubes, int fallenCo
             Point fallenCube = fallenCubes[fc]; //that cube
 
             // if eny cube has the same pos it collides
-            if(fallenCube.x== shapeCube.x+currentShape.pos.x &&
+            if(fallenCube.x == shapeCube.x+currentShape.pos.x &&
                     fallenCube.y == shapeCube.y+currentShape.pos.y){
                 return 1;
             }
