@@ -14,9 +14,30 @@ int score = 1;
 
 
 Shape *currentShape;
+Shape *previewShape;
 
 int msleep(long msec);
 
+int msleep(long msec)
+{
+    struct timespec ts;
+    int res;
+
+    if (msec < 0)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+
+    ts.tv_sec = msec / 1000;
+    ts.tv_nsec = (msec % 1000) * 1000000;
+
+    do {
+        res = nanosleep(&ts, &ts);
+    } while (res && errno == EINTR);
+
+    return res;
+}
 void renderScore(){
     printf("███████████████████████\n");
     printf("█         Score       █\n");
@@ -36,6 +57,19 @@ void renderScore(){
     printf("███████████████████████\n");
 }
 
+void setPreview(Shape shape){
+    
+    for(int i = 0; i < 4; i++){
+        for(int r = 0; r < 20-currentShape->pos.y; r++){
+            if(collides(*currentShape,newPoint(0, r), fallenCubes,fallenCount)){
+                previewShape = newShape(shape.pos.x, currentShape->pos.y+r-1, shape.type);
+                return;
+            }
+        }
+    }
+
+}
+
 void renderWorld(Shape *currentShape){
     system("clear");
     renderScore();
@@ -46,12 +80,23 @@ void renderWorld(Shape *currentShape){
             int at = 0;
             for(int i = 0; i < 4; i++){
                 Point cube = currentShape->cubes[i];
+                Point pcube = previewShape->cubes[i];
                 if( currentShape->pos.x+cube.x == x &&
                         currentShape->pos.y+cube.y == y){
-
                     renderPoint(cube);
                     at = 1;
                 }
+            }
+            if(!at){
+                for(int i = 0; i < 4; i++){
+                    Point cube = currentShape->cubes[i];
+                    if( previewShape->pos.x+cube.x == x &&
+                            previewShape->pos.y+cube.y == y){
+                        renderPointChar(cube,'=');
+                        at = 1;
+                    }
+                }
+
             }
             for(int j = 0; j < fallenCount; j++){
                 Point cube = fallenCubes[j];
@@ -68,27 +113,6 @@ void renderWorld(Shape *currentShape){
     }
     printf("███████████████████████\n");
 }
-//check all rows if they are full and return the amount of rows that are full
-// start at buttom, can stop when a row is empty
-/* int fullRows(){ */
-/*     int rows = 0; */
-/*     int count = 0; // amount of cubes at current row */
-/*     for(int r = 20; r >= 0; r--){ */
-/*         count = 0; */
-/*         for(int i = 0; i < fallenCount; i++){ */
-/*             Shape fallen = fallenShapes[i]; */
-/*             for(int c = 0; c < 4; c++){ */
-/*                 Point cube = fallen.cubes[i]; */
-/*                 if(cube.y == r) count++; */
-/*             } */
-/*         } */
-/*         printf("count %d",count); */
-/*         if(count == 10) rows++; */
-/*     } */
-/*     return rows; */
-/* } */
-
-
 
 int removeFullRow(){
     int count = 0;
@@ -126,13 +150,16 @@ int removeFullRow(){
 int main(){
     
     currentShape = newShape(1,15,0);
+    previewShape = newShape(1,16,0);
     int x = 8;
 
     while(1){
         score += removeFullRow()*10;
 
+        setPreview(*currentShape);
         renderWorld(currentShape);
-        char key = getchar();
+        char key = '\n';//getchar();
+                        msleep(300);
         if(!collides(*currentShape, newPoint(0,1), &fallenCubes[0], fallenCount)){
             if(key == 'a' && !collides(*currentShape,newPoint(-1,0),&fallenCubes[0],fallenCount)){
                 currentShape->pos.x--;
@@ -165,6 +192,7 @@ int main(){
             }
             int number = (rand() % (5 - 0 + 1)) + 0;
             currentShape = newShape(5,5,number);
+            previewShape = newShape(5,5,number);
         }
         printf("\n");
         
@@ -174,24 +202,3 @@ int main(){
     return 0;
 }
 
-
-int msleep(long msec)
-{
-    struct timespec ts;
-    int res;
-
-    if (msec < 0)
-    {
-        errno = EINVAL;
-        return -1;
-    }
-
-    ts.tv_sec = msec / 1000;
-    ts.tv_nsec = (msec % 1000) * 1000000;
-
-    do {
-        res = nanosleep(&ts, &ts);
-    } while (res && errno == EINTR);
-
-    return res;
-}

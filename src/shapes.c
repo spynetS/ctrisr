@@ -11,6 +11,7 @@ typedef struct {
 typedef struct {
     Point pos; // global space
     Point cubes[4]; //cubes localspace
+    int type;
 } Shape;
 
 Point newPoint(int x, int y){
@@ -30,6 +31,7 @@ Shape *newShape(int x, int y, int type){
 
     //memset(shape->color, 0, sizeof(shape->color));
     //I
+    shape->type = type;
     if(type == 0){
         shape->cubes[0] = newPoint(-1,0);
         shape->cubes[1] = newPoint(0,0);
@@ -149,6 +151,12 @@ int rotateCollide(Shape shape){
 
 void renderPoint(Point point){
     printf("%s▄ ", point.color);
+    /* printf("%s■ ", point.color); */
+    printf("\033[0m");
+}
+void renderPointChar(Point point, char car){
+    printf("%s", point.color);
+    printf("%c ",car);
     /* printf("%s■ ", point.color); */
     printf("\033[0m");
 }
