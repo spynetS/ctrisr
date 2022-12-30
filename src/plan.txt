@@ -6,8 +6,13 @@ point have also a point pos
 when the points pos is local space
 and the pos is global space
 
-when a piece has fallen and a row should be removed we just
-make all fallen pieces go down the amount of rows to remove
+when a piece has fallen save all cubes in a array
+and when a row is full all cubes at that y pos should be removed
+then all above's y should be incrumentet
+
+///// wrong ////
+//when a piece has fallen and a row should be removed we just
+//make all fallen pieces go down the amount of rows to remove
 
 rotation//
 we use the cos and sin on the shape

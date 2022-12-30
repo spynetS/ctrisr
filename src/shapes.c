@@ -25,7 +25,8 @@ Shape *newShape(int x, int y, int type){
     
     /* Point cubes[4] = {newPoint(-1,0),newPoint(0,0),newPoint(1,0),newPoint(2,0)}; */
     /* Point cubes[4] = {newPoint(-1,1),newPoint(0,1),newPoint(0,0),newPoint(1,1)}; */
-    Point cubes[4] = {newPoint(-1,1),newPoint(0,1),newPoint(1,1),newPoint(1,0)};
+    Point cubes[4] = {newPoint(-1,0),newPoint(0,0),newPoint(1,0),newPoint(1,-1)};
+    /* Point cubes[4] = {newPoint(-1,0),newPoint(-1,0),newPoint(-1,0),newPoint(-1,0)}; */
     for(int i = 0; i < 4;i++){
         shape->cubes[i] = cubes[i];
     }
@@ -35,7 +36,7 @@ Shape *newShape(int x, int y, int type){
 /**
  *  nextStep where to move the shape
  * */
-int collides(Shape currentShape,Point nextStep ,Shape *fallenShapes, int fallenCount){
+int collides(Shape currentShape,Point nextStep ,Point *fallenCubes, int fallenCount){
     //update pos
     currentShape.pos.y += nextStep.y;
     currentShape.pos.x += nextStep.x;
@@ -46,19 +47,15 @@ int collides(Shape currentShape,Point nextStep ,Shape *fallenShapes, int fallenC
         Point shapeCube = currentShape.cubes[sc]; 
         if(shapeCube.y + currentShape.pos.y == 20) return 1; // hit the bottom
 
-        for(int f = 0; f < fallenCount; f++){ // for every shape that has fallen
-            Shape fallenShape = fallenShapes[f]; // that shape
+        for(int fc = 0; fc < fallenCount; fc++){ // for every cube in fallenShape fallen cube
+            Point fallenCube = fallenCubes[fc]; //that cube
 
-            for(int fc = 0; fc < 4; fc++){ // for every cube in fallenShape fallen cube
-                Point fallenCube = fallenShape.cubes[fc]; //that cube
-
-                // if eny cube has the same pos it collides
-                if(fallenCube.x+fallenShape.pos.x == shapeCube.x+currentShape.pos.x &&
-                        fallenCube.y+fallenShape.pos.y == shapeCube.y+currentShape.pos.y){
-                    return 1;
-                }
+            // if eny cube has the same pos it collides
+            if(fallenCube.x== shapeCube.x+currentShape.pos.x &&
+                    fallenCube.y == shapeCube.y+currentShape.pos.y){
+                return 1;
             }
-        } 
+        }
     }
     //else no collision
     return 0;
@@ -66,9 +63,11 @@ int collides(Shape currentShape,Point nextStep ,Shape *fallenShapes, int fallenC
 
 void rotate(Shape *shape){
     for(int i = 0; i < 4; i++){
-        Point cube = shape->cubes[i];
-        cube.x = -cube.y;
-        cube.y = cube.x;
+        Point *cube = &shape->cubes[i];
+
+        int x_temp = -cube->y;
+        cube->y =  cube->x;
+        cube->x =  x_temp;
     }
 }
 
