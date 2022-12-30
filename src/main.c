@@ -81,9 +81,9 @@ void removeFullRow(){
             //remove chars
             for(int c = 0; c < fallenCount; c++){ // hehe c++ hehe
                 if(fallenCubes[c].y == r){
-                    fallenCubes[c].y = 100;
                     renderWorld(currentShape);
-                    msleep(200);
+                    fallenCubes[c].y = 100;
+                    msleep(100);
                 }
             }
             //move above down
@@ -93,6 +93,7 @@ void removeFullRow(){
                 }
                 renderWorld(currentShape);
             }
+            r++;
         }
     }
 }
@@ -106,15 +107,17 @@ int main(){
         removeFullRow();
         char key = getchar();
         if(!collides(*currentShape, newPoint(0,1), &fallenCubes[0], fallenCount)){
-            currentShape->pos.y++;
-            if(key == 'a'){
+            if(key == 'a' && !collides(*currentShape,newPoint(-1,0),&fallenCubes[0],fallenCount)){
                 currentShape->pos.x--;
             }
-            if(key == 'd'){
+            else if(key == 'd' && !collides(*currentShape,newPoint(1,0),&fallenCubes[0],fallenCount)){
                 currentShape->pos.x++;
             }
-            if(key == 'w'){
+            else if(key == 'w'){
                 rotate(currentShape);
+            }
+            else{
+                currentShape->pos.y++;
             }
         }else{
             //add cubes to fallen array and add shape pos to them
@@ -127,16 +130,9 @@ int main(){
             }
             currentShape = newShape(5,5,0);
         }
-        /* int rows = fullRows(); */
-        /* if(rows > 0){ */
-        /*     for(int i = 0; i < fallenCount; i++){ */
-        /*         fallenShapes[i].pos.y+=rows; */
-        /*     } */
-        /* } */
         printf("\n");
         
         renderWorld(currentShape);
-        /* msleep(500); */
     }
 
     return 0;

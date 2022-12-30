@@ -34,7 +34,7 @@ Shape *newShape(int x, int y, int type){
     return shape;
 }
 /**
- *  nextStep where to move the shape
+ *  nextStep = where to move the shape
  * */
 int collides(Shape currentShape,Point nextStep ,Point *fallenCubes, int fallenCount){
     //update pos
@@ -46,6 +46,8 @@ int collides(Shape currentShape,Point nextStep ,Point *fallenCubes, int fallenCo
 
         Point shapeCube = currentShape.cubes[sc]; 
         if(shapeCube.y + currentShape.pos.y == 20) return 1; // hit the bottom
+        if(shapeCube.x + currentShape.pos.x < 0) return 1;
+        if(shapeCube.x + currentShape.pos.x >=10) return 1;
 
         for(int fc = 0; fc < fallenCount; fc++){ // for every cube in fallenShape fallen cube
             Point fallenCube = fallenCubes[fc]; //that cube
