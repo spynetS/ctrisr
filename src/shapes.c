@@ -1,6 +1,8 @@
-#include <stdlib.h>
+#ifndef a
 #include <string.h>
+#endif
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef struct {
     int x;
