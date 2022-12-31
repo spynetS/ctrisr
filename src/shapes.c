@@ -152,9 +152,9 @@ int rotateCollide(Shape shape){
 }
 
 void renderPoint(Point point){
-    /* printf("%s▄ ", point.color); */
+    printf("%s▄ ", point.color);
     /* printf("%s■ ", point.color); */
-    printf("%s# ", point.color);
+    /* printf("%s# ", point.color); */
     printf("\033[0m");
 }
 void renderPointChar(Point point, char* car){
