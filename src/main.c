@@ -77,12 +77,15 @@ void center(){
 
 void startScreen(){
     system("clear");
+    for(int i = 0; i< w.ws_row/2-5; i++){
+        printf("\n");
+    }
     center();
-    printf("Tetris\n");
+    printf("         Tetris\n\n");
     center();
-    printf("a d move side ways\n");
+    printf("'a d' move side ways\n");
     center();
-    printf("w rotate s to move down\n");
+    printf("'w' rotate, 's' to move down\n");
     center();
     printf("Press any key to start\n");
     center();
@@ -91,6 +94,9 @@ void startScreen(){
 }
 
 void renderScore(){
+    for(int i = 0; i< (w.ws_row-HEIGHT)/4; i++){
+        printf("\n");
+    }
     center();
     printf("███████████████████████\n");
     center();
@@ -141,7 +147,7 @@ void renderWorld(Shape *currentShape){
                     Point cube = currentShape->cubes[i];
                     if( previewShape->pos.x+cube.x == x &&
                             previewShape->pos.y+cube.y == y){
-                        renderPointChar(cube,'=');
+                        renderPointChar(cube,"[]");
                         at = 1;
                     }
                 }
@@ -186,7 +192,8 @@ int removeFullRow(){
     for(int r = 20; r >= 0; r--){
         count = 0;
         //count amount on row 
-        for(int c = 0; c < fallenCount; c++){ // hehe c++ hehe if(fallenCubes[c].y == r){
+        for(int c = 0; c < fallenCount; c++){ // hehe c++ hehe
+            if(fallenCubes[c].y == r){
                 count++;
             }
         }
@@ -240,7 +247,7 @@ int main(){
             //get key
             char key = getchar();
             if(key == 'c'){
-                break;
+                return 0;
             }
             if(key == 'a' && !collides(*currentShape,newPoint(-1,0),&fallenCubes[0],fallenCount)){
                 currentShape->pos.x--;
@@ -283,13 +290,14 @@ int main(){
                 fallenCount++;
             }
             // get random number (shape)
+            srand(time(0));
             int number = (rand() % (5 - 0 + 1)) + 0;
-            currentShape = newShape(5,1,number);
-            previewShape = newShape(5,1,number);
+            currentShape = newShape(5,0,number);
+            previewShape = newShape(5,0,number);
         }
         renderTime++;
     }
-    printf("\e[?25h");
+
     return 0;
 }
 
