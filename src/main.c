@@ -40,8 +40,8 @@ int kbhit(void)
 int paused = 0;
 Point fallenCubes[WIDTH*HEIGHT]; // all places 
 int fallenCount = 0; //keep count of how many has fallen
-int score       = 1; 
-int fallDelay   = 6; // how long to wait to fall
+int score       = 0; 
+int fallDelay   = 12; // how long to wait to fall
 
 struct winsize w;
 
@@ -232,9 +232,18 @@ int removeFullRow(){
     return rows;
 }
 
+void updateScore(int rows){
+    if(rows == 1) score += 40;
+    if(rows == 2) score += 100;
+    if(rows == 3) score += 300;
+    if(rows == 4) score += 1200;
+}
+
 int main(){
     
+    // retrive terminal width and height
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w); 
+   
     startScreen();
 
     //create current shape
@@ -246,7 +255,8 @@ int main(){
     while(1){
         msleep(50);
         
-        score += removeFullRow()*10;
+        updateScore(removeFullRow());
+
 
         //calculate where places preview should be
         setPreview(*currentShape); 
