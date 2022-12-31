@@ -37,6 +37,7 @@ int kbhit(void)
   return 0;
 }
 
+int paused = 0;
 Point fallenCubes[WIDTH*HEIGHT]; // all places 
 int fallenCount = 0; //keep count of how many has fallen
 int score       = 1; 
@@ -81,16 +82,22 @@ void startScreen(){
         printf("\n");
     }
     center();
-    printf("         Tetris\n\n");
+    printf("           Tetris\n\n");
     center();
-    printf("'a d' move side ways\n");
+    printf("         q to quit\n");
     center();
-    printf("'w' rotate, 's' to move down\n");
+    printf("         p to pause\n");
     center();
-    printf("Press any key to start\n");
+    printf("   'a d' move side ways\n");
+    center();
+    printf("'w' rotate, 's' to move down\n\n");
+    center();
+    printf("    Press any key to start\n");
     center();
     printf("\e[?25l");
+    system("stty raw");
     getchar();
+    system("stty cooked");
 }
 
 void renderScore(){
@@ -124,6 +131,10 @@ void renderScore(){
 void renderWorld(Shape *currentShape){
     
     system("clear");
+    if(paused){
+        center();
+        printf("Press p to continue");
+    }
     renderScore();
 
     for(int y = 0; y < HEIGHT; y++){
@@ -232,7 +243,6 @@ int main(){
     previewShape = newShape(1,16,0);
 
     int renderTime = 0; 
-
     while(1){
         msleep(50);
         
@@ -241,27 +251,28 @@ int main(){
         //calculate where places preview should be
         setPreview(*currentShape); 
         renderWorld(currentShape);
-        
+         
         //key pressed?
         if(kbhit()){
             //get key
             char key = getchar();
-            if(key == 'c'){
+            if(key == 'q'){
                 return 0;
             }
-            if(key == 'a' && !collides(*currentShape,newPoint(-1,0),&fallenCubes[0],fallenCount)){
+            if(key == 'p'){
+                paused = paused==1?0:1;
+            }
+            if(key == 'a' && !collides(*currentShape,newPoint(-1,0),&fallenCubes[0],fallenCount) && !paused){
                 currentShape->pos.x--;
             }
-            if(key == 's' && !collides(*currentShape,newPoint(0,1),&fallenCubes[0],fallenCount)){
+            if(key == 's' && !collides(*currentShape,newPoint(0,1),&fallenCubes[0],fallenCount)&& !paused){
                 //fallDelay = 0;
                 currentShape->pos.y ++;
-            }else{
-                fallDelay = 6;
             }
-            if(key == 'd' && !collides(*currentShape,newPoint(1,0),&fallenCubes[0],fallenCount)){
+            if(key == 'd' && !collides(*currentShape,newPoint(1,0),&fallenCubes[0],fallenCount)&& !paused){
                 currentShape->pos.x++;
             }
-            else if(key == 'w'){
+            else if(key == 'w'&& !paused){
                 // if shape collides when rotate move it either right or left
                 while(rotateCollide(*currentShape)){
                     if(currentShape->pos.x < 5){
@@ -274,28 +285,31 @@ int main(){
                 rotate(currentShape);
             }
         }
-        // move shape down
-        if(!collides(*currentShape, newPoint(0,1), &fallenCubes[0], fallenCount) ){
-            if(renderTime > fallDelay){
-                currentShape->pos.y++;
-                renderTime =0;
+        if(!paused){
+
+            // move shape down
+            if(!collides(*currentShape, newPoint(0,1), &fallenCubes[0], fallenCount) ){
+                if(renderTime > fallDelay){
+                    currentShape->pos.y++;
+                    renderTime =0;
+                }
+            }else{
+                //add cubes to fallen array and add shape pos to them
+                for(int i = 0; i < 4; i++){
+                    Point newCube = currentShape->cubes[i];
+                    newCube.x += currentShape->pos.x;
+                    newCube.y += currentShape->pos.y;
+                    fallenCubes[fallenCount] = newCube;
+                    fallenCount++;
+                }
+                // get random number (shape)
+                srand(time(0));
+                int number = (rand() % (5 - 0 + 1)) + 0;
+                currentShape = newShape(5,0,number);
+                previewShape = newShape(5,0,number);
             }
-        }else{
-            //add cubes to fallen array and add shape pos to them
-            for(int i = 0; i < 4; i++){
-                Point newCube = currentShape->cubes[i];
-                newCube.x += currentShape->pos.x;
-                newCube.y += currentShape->pos.y;
-                fallenCubes[fallenCount] = newCube;
-                fallenCount++;
-            }
-            // get random number (shape)
-            srand(time(0));
-            int number = (rand() % (5 - 0 + 1)) + 0;
-            currentShape = newShape(5,0,number);
-            previewShape = newShape(5,0,number);
+            renderTime++;
         }
-        renderTime++;
     }
 
     return 0;
