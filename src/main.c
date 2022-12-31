@@ -213,7 +213,7 @@ int main(){
             }
             if(key == 's' && !collides(*currentShape,newPoint(0,1),&fallenCubes[0],fallenCount)){
                 //fallDelay = 0;
-                currentShape->pos.y ++:
+                currentShape->pos.y ++;
             }else{
                 fallDelay = 6;
             }
