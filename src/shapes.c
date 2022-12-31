@@ -43,7 +43,7 @@ Shape *newShape(int x, int y, int type){
             strcpy(shape->cubes[i].color, "\033[0;36m");
         }
     }
-    //l
+    //L
     if(type == 1){
         shape->cubes[0] = newPoint(-1,0);
         shape->cubes[1] = newPoint(0,0);
@@ -56,7 +56,7 @@ Shape *newShape(int x, int y, int type){
     
     //J
     if(type == 2){
-        shape->cubes[0] = newPoint(-1,-1);
+        shape->cubes[0] = newPoint(1,-1);
         shape->cubes[1] = newPoint(-1,0);
         shape->cubes[2] = newPoint(0,0);
         shape->cubes[3] = newPoint(1,0);

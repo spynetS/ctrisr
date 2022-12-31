@@ -5,6 +5,7 @@
 #include <termios.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/ioctl.h>
 
 #define WIDTH 10
 #define HEIGHT 20
@@ -41,6 +42,7 @@ int fallenCount = 0; //keep count of how many has fallen
 int score       = 1; 
 int fallDelay   = 6; // how long to wait to fall
 
+struct winsize w;
 
 Shape *currentShape;
 Shape *previewShape;
@@ -66,10 +68,35 @@ int msleep(long msec)
 
     return res;
 }
+
+void center(){
+    for(int i = 0; i< w.ws_col/2-WIDTH; i++){
+        printf(" ");
+    }
+}
+
+void startScreen(){
+    system("clear");
+    center();
+    printf("Tetris\n");
+    center();
+    printf("a d move side ways\n");
+    center();
+    printf("w rotate s to move down\n");
+    center();
+    printf("Press any key to start\n");
+    center();
+    printf("\e[?25l");
+    getchar();
+}
+
 void renderScore(){
+    center();
     printf("███████████████████████\n");
+    center();
     printf("█         Score       █\n");
 
+    center();
     if(score < 10){
         printf("█          %d          █\n",score);
     }
@@ -81,24 +108,12 @@ void renderScore(){
     {
         printf("█          %d         █\n",score);
     }
+    center();
     printf("█                     █\n");
+    center();
     printf("███████████████████████\n");
 }
 
-void setPreview(Shape shape){
-    
-    // loop though all cubes 
-    for(int i = 0; i < 4; i++){
-        //check if it collides att bottom and upwards
-        for(int r = 0; r < 20-currentShape->pos.y; r++){
-            // if collides set the previewShape position
-            if(collides(*currentShape,newPoint(0, r+1), fallenCubes,fallenCount)){
-                previewShape = newShape(shape.pos.x, currentShape->pos.y+r, shape.type);
-                return;
-            }
-        }
-    }
-}
 
 void renderWorld(Shape *currentShape){
     
@@ -106,6 +121,7 @@ void renderWorld(Shape *currentShape){
     renderScore();
 
     for(int y = 0; y < HEIGHT; y++){
+        center();
         printf("█ ");
         for(int x = 0; x < WIDTH; x++){
             // if 1 dont print . char 
@@ -144,9 +160,25 @@ void renderWorld(Shape *currentShape){
         }
         printf("█\n");
     }
+    center();
     printf("███████████████████████\n");
+    printf("\e[?25l");
 }
 
+void setPreview(Shape shape){
+    
+    // loop though all cubes 
+    for(int i = 0; i < 4; i++){
+        //check if it collides att bottom and upwards
+        for(int r = 0; r < 20-currentShape->pos.y; r++){
+            // if collides set the previewShape position
+            if(collides(*currentShape,newPoint(0, r+1), fallenCubes,fallenCount)){
+                previewShape = newShape(shape.pos.x, currentShape->pos.y+r, shape.type);
+                return;
+            }
+        }
+    }
+}
 int removeFullRow(){
     int count = 0; // amount of cubes on a row
     int rows = 0; // rows that are full
@@ -154,8 +186,7 @@ int removeFullRow(){
     for(int r = 20; r >= 0; r--){
         count = 0;
         //count amount on row 
-        for(int c = 0; c < fallenCount; c++){ // hehe c++ hehe
-            if(fallenCubes[c].y == r){
+        for(int c = 0; c < fallenCount; c++){ // hehe c++ hehe if(fallenCubes[c].y == r){
                 count++;
             }
         }
@@ -184,9 +215,12 @@ int removeFullRow(){
 }
 
 int main(){
+    
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w); 
+    startScreen();
 
     //create current shape
-    currentShape = newShape(5,1,0);
+    currentShape = newShape(5,1,2);
     //create a placed preview
     previewShape = newShape(1,16,0);
 
@@ -206,7 +240,7 @@ int main(){
             //get key
             char key = getchar();
             if(key == 'c'){
-                return 0;
+                break;
             }
             if(key == 'a' && !collides(*currentShape,newPoint(-1,0),&fallenCubes[0],fallenCount)){
                 currentShape->pos.x--;
@@ -255,7 +289,7 @@ int main(){
         }
         renderTime++;
     }
-
+    printf("\e[?25h");
     return 0;
 }
 
