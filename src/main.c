@@ -131,7 +131,7 @@ int removeFullRow(){
                 if(fallenCubes[c].y == r){
                     renderWorld(currentShape);
                     fallenCubes[c].y = 100;
-                    msleep(100);
+                    msleep(70);
                 }
             }
             //move above down
@@ -158,8 +158,7 @@ int main(){
 
         setPreview(*currentShape);
         renderWorld(currentShape);
-        char key = '\n';//getchar();
-                        msleep(300);
+        char key = getchar();
         if(!collides(*currentShape, newPoint(0,1), &fallenCubes[0], fallenCount)){
             if(key == 'a' && !collides(*currentShape,newPoint(-1,0),&fallenCubes[0],fallenCount)){
                 currentShape->pos.x--;
