@@ -253,6 +253,10 @@ int main(){
                     renderTime =0;
                 }
             }else{
+                //end
+                if(currentShape->pos.y == -1){
+                    return 0;
+                }
                 //add cubes to fallen array and add shape pos to them
                 for(int i = 0; i < 4; i++){
                     Point newCube = currentShape->cubes[i];
@@ -264,8 +268,8 @@ int main(){
                 // get random number (shape)
                 srand(time(0));
                 int number = (rand() % (5 - 0 + 1)) + 0;
-                currentShape = newShape(5,0,number);
-                previewShape = newShape(5,0,number);
+                currentShape = newShape(4,-1,number);
+                previewShape = newShape(4,-1,number);
             }
             renderTime++;
         }
