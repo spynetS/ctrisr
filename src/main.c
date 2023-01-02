@@ -206,10 +206,6 @@ int main(){
         updateScore(removeFullRow());
 
 
-        //calculate where places preview should be
-        setPreview(*currentShape); 
-        renderWorld(currentShape);
-         
         //key pressed?
         if(kbhit()){
             //get key
@@ -242,6 +238,10 @@ int main(){
                 // then rotate
                 rotate(currentShape);
             }
+
+            //calculate where places preview should be
+            setPreview(*currentShape); 
+            renderWorld(currentShape);
         }
         if(!paused){
 
@@ -249,6 +249,7 @@ int main(){
             if(!collides(*currentShape, newPoint(0,1), &fallenCubes[0], fallenCount) ){
                 if(renderTime > fallDelay){
                     currentShape->pos.y++;
+                    renderWorld(currentShape);
                     renderTime =0;
                 }
             }else{
