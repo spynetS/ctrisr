@@ -1,44 +1,12 @@
 #include "shapes.c"
-#include <time.h>
-#include <errno.h>
-
-#include <termios.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
+#include "msc.c"
 
 #define WIDTH 10
 #define HEIGHT 20
 
-int kbhit(void)
-{
-  struct termios oldt, newt;
-  int ch;
-  int oldf;
-  
-  tcgetattr(STDIN_FILENO, &oldt);
-  newt = oldt;
-  newt.c_lflag &= ~(ICANON | ECHO);
-  tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-  oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
-  fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
-  
-  ch = getchar();
-  
-  tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-  fcntl(STDIN_FILENO, F_SETFL, oldf);
-  
-  if(ch != EOF)
-  {
-      ungetc(ch, stdin);
-      return 1;
-  }
-  
-  return 0;
-}
 
 int paused = 0;
-Point fallenCubes[WIDTH*HEIGHT]; // all places 
+Point fallenCubes[1000]; // all places 
 int fallenCount = 0; //keep count of how many has fallen
 int score       = 0; 
 int fallDelay   = 12; // how long to wait to fall
@@ -48,27 +16,6 @@ struct winsize w;
 Shape *currentShape;
 Shape *previewShape;
 
-
-int msleep(long msec)
-{
-    struct timespec ts;
-    int res;
-
-    if (msec < 0)
-    {
-        errno = EINVAL;
-        return -1;
-    }
-
-    ts.tv_sec = msec / 1000;
-    ts.tv_nsec = (msec % 1000) * 1000000;
-
-    do {
-        res = nanosleep(&ts, &ts);
-    } while (res && errno == EINTR);
-
-    return res;
-}
 
 void center(){
     for(int i = 0; i< w.ws_col/2-WIDTH; i++){
@@ -113,12 +60,13 @@ void renderScore(){
     if(score < 10){
         printf("█          %d          █\n",score);
     }
-    else if(score >= 100)
-    {
+    else if(score >= 1000){
+        printf("█         %d        █\n",score);
+    }
+    else if(score >= 100){
         printf("█         %d         █\n",score);
     }
-    else if(score >= 10)
-    {
+    else if(score >= 10){
         printf("█          %d         █\n",score);
     }
     center();
@@ -214,8 +162,8 @@ int removeFullRow(){
             for(int c = 0; c < fallenCount; c++){ // hehe c++ hehe
                 if(fallenCubes[c].y == r){
                     // should free this value instead of move
-                    renderWorld(currentShape);
                     fallenCubes[c].y = 100;
+                    renderWorld(currentShape);
                     msleep(30);
                 }
             }
