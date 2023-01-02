@@ -3,6 +3,7 @@
 #endif
 #include <stdio.h>
 #include <stdlib.h>
+#include "llist.c"
 
 typedef struct {
     int x;
@@ -109,7 +110,7 @@ Shape *newShape(int x, int y, int type){
 /**
  *  nextStep = where to move the shape
  * */
-int collides(Shape currentShape,Point nextStep ,Point *fallenCubes, int fallenCount){
+int collides(Shape currentShape,Point nextStep ,Node *fallenCubes){
     //update pos
     currentShape.pos.y += nextStep.y;
     currentShape.pos.x += nextStep.x;
@@ -120,14 +121,17 @@ int collides(Shape currentShape,Point nextStep ,Point *fallenCubes, int fallenCo
         if(shapeCube.y + currentShape.pos.y == 20) return 1; // hit the bottom
         if(shapeCube.x + currentShape.pos.x < 0) return 1;
         if(shapeCube.x + currentShape.pos.x >=10) return 1;
+        
+        if(fallenCubes != NULL){
+            int fallenCount = listLen(fallenCubes);
+            for(int fc = 0; fc < fallenCount; fc++){ // for every cube in fallenShape fallen cube
+                Point fallenCube = *(Point*)get(fallenCubes,fc)->value; //that cube
 
-        for(int fc = 0; fc < fallenCount; fc++){ // for every cube in fallenShape fallen cube
-            Point fallenCube = fallenCubes[fc]; //that cube
-
-            // if eny cube has the same pos it collides
-            if(fallenCube.x == shapeCube.x+currentShape.pos.x &&
-                    fallenCube.y == shapeCube.y+currentShape.pos.y){
-                return 1;
+                // if eny cube has the same pos it collides
+                if(fallenCube.x == shapeCube.x+currentShape.pos.x &&
+                        fallenCube.y == shapeCube.y+currentShape.pos.y){
+                    return 1;
+                }
             }
         }
     }
@@ -148,7 +152,7 @@ void rotate(Shape *shape){
 int rotateCollide(Shape shape){
     Shape *shape_p = &shape; 
     rotate(shape_p);
-    return collides(*shape_p, newPoint(0,0),NULL, 0);
+    return collides(*shape_p, newPoint(0,0),NULL);
 }
 
 void renderPoint(Point point){

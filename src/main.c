@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 
+
 #define WIDTH 10
 #define HEIGHT 20
 
@@ -38,8 +39,7 @@ int kbhit(void)
 }
 
 int paused = 0;
-Point fallenCubes[WIDTH*HEIGHT]; // all places 
-int fallenCount = 0; //keep count of how many has fallen
+struct node *fallenCubes; // all places 
 int score       = 0; 
 int fallDelay   = 12; // how long to wait to fall
 
@@ -126,7 +126,7 @@ void renderScore(){
     center();
     printf("███████████████████████\n");
 }
-
+int fallenC = 0;
 
 void renderWorld(Shape *currentShape){
     
@@ -164,11 +164,13 @@ void renderWorld(Shape *currentShape){
                 }
 
             }
+            int fallenCount = listLen(fallenCubes);
             for(int j = 0; j < fallenCount; j++){
-                Point cube = fallenCubes[j];
-                if( cube.x == x &&
-                        cube.y == y){
-                    renderPoint(cube);
+                Point *cube = (Point*)get(fallenCubes,j)->value;
+                if(cube->x == x &&
+                        cube->y == y){
+                    printf("x ");
+                    //renderPoint(*cube);
                     at = 1;
                 }
             }
@@ -189,7 +191,7 @@ void setPreview(Shape shape){
         //check if it collides att bottom and upwards
         for(int r = 0; r < 20-currentShape->pos.y; r++){
             // if collides set the previewShape position
-            if(collides(*currentShape,newPoint(0, r+1), fallenCubes,fallenCount)){
+            if(collides(*currentShape,newPoint(0, r+1), fallenCubes)){
                 previewShape = newShape(shape.pos.x, currentShape->pos.y+r, shape.type);
                 return;
             }
@@ -203,8 +205,9 @@ int removeFullRow(){
     for(int r = 20; r >= 0; r--){
         count = 0;
         //count amount on row 
+        int fallenCount = listLen(fallenCubes);
         for(int c = 0; c < fallenCount; c++){ // hehe c++ hehe
-            if(fallenCubes[c].y == r){
+            if(((Point *)get(fallenCubes,c)->value)->y == r){
                 count++;
             }
         }
@@ -212,17 +215,17 @@ int removeFullRow(){
             //remove chars
             rows++;
             for(int c = 0; c < fallenCount; c++){ // hehe c++ hehe
-                if(fallenCubes[c].y == r){
+                if(((Point *)get(fallenCubes,c)->value)->y == r){
                     // should free this value instead of move
                     renderWorld(currentShape);
-                    fallenCubes[c].y = 100;
+                    ((Point *)get(fallenCubes,c)->value)->y = 100;
                     msleep(30);
                 }
             }
             //move above down
             for(int c = 0; c < fallenCount; c++){ // hehe c++ hehe
-                if(fallenCubes[c].y < r){
-                    fallenCubes[c].y++; 
+                if(((Point *)get(fallenCubes,c)->value)->y < r){
+                    ((Point *)get(fallenCubes,c)->value)->y++; 
                 }
                 //renderWorld(currentShape);
             }
@@ -245,7 +248,7 @@ int main(){
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w); 
    
     startScreen();
-
+    fallenCubes = init_list();
     //create current shape
     currentShape = newShape(5,1,2);
     //create a placed preview
@@ -253,6 +256,7 @@ int main(){
 
     int renderTime = 0; 
     while(1){
+
         msleep(50);
         
         updateScore(removeFullRow());
@@ -272,14 +276,14 @@ int main(){
             if(key == 'p'){
                 paused = paused==1?0:1;
             }
-            if(key == 'a' && !collides(*currentShape,newPoint(-1,0),&fallenCubes[0],fallenCount) && !paused){
+            if(key == 'a' && !collides(*currentShape,newPoint(-1,0),fallenCubes) && !paused){
                 currentShape->pos.x--;
             }
-            if(key == 's' && !collides(*currentShape,newPoint(0,1),&fallenCubes[0],fallenCount)&& !paused){
+            if(key == 's' && !collides(*currentShape,newPoint(0,1),fallenCubes)&& !paused){
                 //fallDelay = 0;
                 currentShape->pos.y ++;
             }
-            if(key == 'd' && !collides(*currentShape,newPoint(1,0),&fallenCubes[0],fallenCount)&& !paused){
+            if(key == 'd' && !collides(*currentShape,newPoint(1,0),fallenCubes)&& !paused){
                 currentShape->pos.x++;
             }
             else if(key == 'w'&& !paused){
@@ -298,7 +302,7 @@ int main(){
         if(!paused){
 
             // move shape down
-            if(!collides(*currentShape, newPoint(0,1), &fallenCubes[0], fallenCount) ){
+            if(!collides(*currentShape, newPoint(0,1), fallenCubes) ){
                 if(renderTime > fallDelay){
                     currentShape->pos.y++;
                     renderTime =0;
@@ -306,11 +310,14 @@ int main(){
             }else{
                 //add cubes to fallen array and add shape pos to them
                 for(int i = 0; i < 4; i++){
-                    Point newCube = currentShape->cubes[i];
-                    newCube.x += currentShape->pos.x;
-                    newCube.y += currentShape->pos.y;
-                    fallenCubes[fallenCount] = newCube;
-                    fallenCount++;
+                    Point *newCube = malloc(sizeof (Point));
+                    newCube->x = currentShape->cubes[i].x;
+                    newCube->y = currentShape->cubes[i].y;
+
+                    newCube->x += currentShape->pos.x;
+                    newCube->y += currentShape->pos.y;
+                    printf("%d\n",listLen(fallenCubes));
+                    push(fallenCubes,newCube);
                 }
                 // get random number (shape)
                 srand(time(0));
