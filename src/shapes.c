@@ -145,10 +145,10 @@ void rotate(Shape *shape){
     }
 }
 
-int rotateCollide(Shape shape){
+int rotateCollide(Shape shape,Point* fallenCubes,int count){
     Shape *shape_p = &shape; 
     rotate(shape_p);
-    return collides(*shape_p, newPoint(0,0),NULL, 0);
+    return collides(*shape_p, newPoint(0,0),fallenCubes, count);
 }
 
 void renderPoint(Point point){

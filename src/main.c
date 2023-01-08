@@ -238,15 +238,19 @@ int main(){
             }
             else if(key == 'w'&& !paused){
                 // if shape collides when rotate move it either right or left
-                while(rotateCollide(*currentShape)){
-                    if(currentShape->pos.x < 5){
-                        currentShape->pos.x++;
+                for(int i = 0; i < 4; i++){ // 4 is max length
+                    if(rotateCollide(*currentShape, &fallenCubes[0], fallenCount)){
+                        if(currentShape->pos.x < 5 && !collides(*currentShape, newPoint(1,0),&fallenCubes[0],fallenCount) ){
+                            currentShape->pos.x++;
+                        }else if(!collides(*currentShape, newPoint(-1,0),&fallenCubes[0],fallenCount)){
+                            currentShape->pos.x--;
+                        }
                     }else{
-                        currentShape->pos.x--;
+                        rotate(currentShape);
+                        break;
                     }
                 }
                 // then rotate
-                rotate(currentShape);
             }
 
             //calculate where places preview should be
