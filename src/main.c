@@ -35,7 +35,7 @@ void startScreen(){
         printf("\n");
     }
     center();
-    printf("           Tetris\n\n");
+    printf("          CTRISR\n\n");
     center();
     printf("         q to quit\n");
     center();
