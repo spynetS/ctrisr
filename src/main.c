@@ -231,6 +231,7 @@ int main(){
             if(key == 's' && !collides(*currentShape,newPoint(0,1),&fallenCubes[0],fallenCount)&& !paused){
                 //fallDelay = 0;
                 currentShape->pos.y ++;
+                score++;
             }
             if(key == 'd' && !collides(*currentShape,newPoint(1,0),&fallenCubes[0],fallenCount)&& !paused){
                 currentShape->pos.x++;
@@ -279,6 +280,7 @@ int main(){
                 int number = (rand() % (5 - 0 + 1)) + 0;
                 currentShape = newShape(4,-1,number);
                 previewShape = newShape(4,-1,number);
+                score++;
             }
             renderTime++;
         }
