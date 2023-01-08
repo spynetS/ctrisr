@@ -10,13 +10,19 @@ Point fallenCubes[1000]; // all places
 int fallenCount = 0; //keep count of how many has fallen
 int score       = 0; 
 int fallDelay   = 12; // how long to wait to fall
-
+int fallDeleyDecreser = 100; // when zero decrese fallDelay
 struct winsize w;
 
 Shape *currentShape;
 Shape *previewShape;
 
 
+
+void end(){
+    printf("\nYou got %d\n",score);
+    printf("\e[?25h");
+    exit(0);
+}
 void center(){
     for(int i = 0; i< w.ws_col/2-WIDTH; i++){
         printf(" ");
@@ -202,7 +208,10 @@ int main(){
     int renderTime = 0; 
     while(1){
         msleep(50);
-        
+        if(fallDeleyDecreser == 0){
+            fallDelay --;
+            fallDeleyDecreser = 100;
+        }
         updateScore(removeFullRow());
 
 
@@ -211,7 +220,7 @@ int main(){
             //get key
             char key = getchar();
             if(key == 'q'){
-                return 0;
+                end();
             }
             if(key == 'p'){
                 paused = paused==1?0:1;
@@ -255,7 +264,7 @@ int main(){
             }else{
                 //end
                 if(currentShape->pos.y == -1){
-                    return 0;
+                    end();
                 }
                 //add cubes to fallen array and add shape pos to them
                 for(int i = 0; i < 4; i++){
@@ -275,6 +284,6 @@ int main(){
         }
     }
 
-    return 0;
+    end();
 }
 
