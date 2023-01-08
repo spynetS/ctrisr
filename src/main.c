@@ -127,7 +127,7 @@ void renderWorld(Shape *currentShape){
                 }
             }
             if(!at)
-                printf(". ");
+                printf("· ");
         }
         printf("█\n");
     }
