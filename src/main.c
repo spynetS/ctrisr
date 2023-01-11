@@ -9,7 +9,7 @@ int paused = 0;
 Point fallenCubes[1000]; // all places 
 int fallenCount = 0; //keep count of how many has fallen
 int score       = 0; 
-int fallDelay   = 12; // how long to wait to fall
+int fallDelay   = 20; // how long to wait to fall
 int fallDeleyDecreser = 100; // when zero decrese fallDelay
 struct winsize w;
 
@@ -284,6 +284,7 @@ int main(){
                 int number = (rand() % (5 - 0 + 1)) + 0;
                 currentShape = newShape(4,-1,number);
                 previewShape = newShape(4,-1,number);
+                setPreview(*currentShape); 
                 score++;
             }
             renderTime++;
