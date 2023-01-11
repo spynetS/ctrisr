@@ -10,7 +10,7 @@ Point fallenCubes[1000]; // all places
 int fallenCount = 0; //keep count of how many has fallen
 int score       = 0; 
 int fallDelay   = 12; // how long to wait to fall
-int fallDeleyDecreser = 100; // when zero decrese fallDelay
+int fallDeleyDecreser = 200; // when zero decrese fallDelay
 struct winsize w;
 
 Shape *currentShape;
@@ -210,7 +210,7 @@ int main(){
         msleep(50);
         if(fallDeleyDecreser == 0){
             fallDelay --;
-            fallDeleyDecreser = 100;
+            fallDeleyDecreser = 200;
         }
         fallDeleyDecreser--;
         updateScore(removeFullRow());
