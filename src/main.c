@@ -212,6 +212,7 @@ int main(){
             fallDelay --;
             fallDeleyDecreser = 100;
         }
+        fallDeleyDecreser--;
         updateScore(removeFullRow());
 
 
