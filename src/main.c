@@ -234,6 +234,11 @@ int main(){
                 currentShape->pos.y ++;
                 score++;
             }
+            if(key == ' ' && !collides(*currentShape,newPoint(0,1),&fallenCubes[0],fallenCount)&& !paused){
+                //fallDelay = 0;
+                currentShape->pos.y = previewShape->pos.y;
+                score++;
+            }
             if(key == 'd' && !collides(*currentShape,newPoint(1,0),&fallenCubes[0],fallenCount)&& !paused){
                 currentShape->pos.x++;
             }
