@@ -34,7 +34,7 @@ Shape *newShape(int x, int y, int type){
     //memset(shape->color, 0, sizeof(shape->color));
     //I
     shape->type = type;
-    if(type == 0){
+    if(type == 0 || type == 6){
         shape->cubes[0] = newPoint(-1,0);
         shape->cubes[1] = newPoint(0,0);
         shape->cubes[2] = newPoint(1,0);
@@ -95,7 +95,7 @@ Shape *newShape(int x, int y, int type){
         }
     }
     //z
-    if(type == 6){
+    if(type == 5){
         shape->cubes[0] = newPoint(-1,1);
         shape->cubes[1] = newPoint(0,1);
         shape->cubes[2] = newPoint(1,0);
