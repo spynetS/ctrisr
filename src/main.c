@@ -1,5 +1,6 @@
 #include "shapes.c"
 #include "msc.c"
+#include <stdio.h>
 
 #define WIDTH 10
 #define HEIGHT 20
@@ -15,7 +16,7 @@ struct winsize w;
 
 Shape *currentShape;
 Shape *previewShape;
-
+Shape *savedShape;
 
 
 void end(){
@@ -77,6 +78,34 @@ void renderScore(){
     }
     center();
     printf("█                     █\n");
+    center();
+        printf("█");
+    for(int y = 0; y < 5; y ++){
+        for(int x = 0; x < 5; x ++){
+            int rendered = 0;
+            if(savedShape != NULL){
+                for(int i = 0; i < 4; i++){
+                    Point cube = savedShape->cubes[i];
+                    cube.x += 2;//currentShape->pos.x;
+                    cube.y += 2;//currentShape->pos.y;
+                    if( cube.x == x &&
+                        cube.y == y){
+                        renderPoint(cube);
+                        rendered = 1;
+
+                    }
+                }
+            }
+            if(rendered == 0) 
+                printf(". ");
+        }
+        printf("█\n");
+        center();
+        printf("█");
+
+    }
+    printf("\n");
+
     center();
     printf("███████████████████████\n");
 }
@@ -193,6 +222,15 @@ void updateScore(int rows){
     if(rows == 4) score += 1200;
 }
 
+void setNewShape(){
+    // get random number (shape)
+    srand(time(0));
+    int number = (rand() % (5 - 0 + 1)) + 0;
+    currentShape = newShape(4,-1,number);
+    previewShape = newShape(4,-1,number);
+    setPreview(*currentShape); 
+}
+
 int main(){
     
     // retrive terminal width and height
@@ -223,6 +261,16 @@ int main(){
             char key = getchar();
             if(key == 'q'){
                 end();
+            }
+            if(key == 'e'){
+                if(savedShape == NULL){
+                    savedShape = currentShape;
+                    setNewShape();
+                }
+                else{
+                    currentShape = savedShape;
+                    savedShape = NULL;
+                }
             }
             if(key == 'p'){
                 paused = paused==1?0:1;
@@ -286,12 +334,7 @@ int main(){
                     fallenCubes[fallenCount] = newCube;
                     fallenCount++;
                 }
-                // get random number (shape)
-                srand(time(0));
-                int number = (rand() % (5 - 0 + 1)) + 0;
-                currentShape = newShape(4,-1,number);
-                previewShape = newShape(4,-1,number);
-                setPreview(*currentShape); 
+                setNewShape();
                 score++;
             }
             renderTime++;
