@@ -42,6 +42,8 @@ void startScreen(){
     center();
     printf("         p to pause\n");
     center();
+    printf("         e to save\n");
+    center();
     printf("   'a d' move side ways\n");
     center();
     printf("'w' rotate, 's' to move down\n\n");
@@ -78,8 +80,9 @@ void renderScore(){
     }
     center();
     printf("█                     █\n");
+    // render saved shape
     center();
-        printf("█");
+    printf("█      ");
     for(int y = 0; y < 5; y ++){
         for(int x = 0; x < 5; x ++){
             int rendered = 0;
@@ -99,12 +102,12 @@ void renderScore(){
             if(rendered == 0) 
                 printf(". ");
         }
-        printf("█\n");
+        printf("     █\n");
         center();
-        printf("█");
+        printf("█      ");
 
     }
-    printf("\n");
+    printf("               █\n");
 
     center();
     printf("███████████████████████\n");
@@ -268,8 +271,9 @@ int main(){
                     setNewShape();
                 }
                 else{
+                    Shape *temp = currentShape;
                     currentShape = savedShape;
-                    savedShape = NULL;
+                    savedShape = temp;
                 }
             }
             if(key == 'p'){
