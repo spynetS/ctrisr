@@ -137,7 +137,6 @@ void renderWorld(Shape *currentShape){
 }
 
 void setPreview(Shape shape){
-    
     // loop though all cubes 
     for(int i = 0; i < 4; i++){
         //check if it collides att bottom and upwards
@@ -183,6 +182,7 @@ int removeFullRow(){
             r++;
         }
     }
+    setPreview(*currentShape);
     return rows;
 }
 
@@ -213,6 +213,7 @@ int main(){
             fallDeleyDecreser = 500;
         }
         fallDeleyDecreser--;
+        //amount of rows deleted addes score
         updateScore(removeFullRow());
 
 
