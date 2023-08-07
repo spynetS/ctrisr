@@ -1,9 +1,11 @@
-#include "shapes.c"
+#include "shapes.h"
 #include "msc.c"
 #include <stdio.h>
+#include <stdlib.h>
+#include "renderer.h"
 
-#define WIDTH 10
-#define HEIGHT 20
+#define WIDTH 11
+#define HEIGHT 22
 
 
 int paused = 0;
@@ -115,64 +117,64 @@ void renderScore(){
 
 
 void renderWorld(Shape *currentShape){
-    
-    system("clear");
-    if(paused){
-        center();
-        printf("Press p to continue");
-    }
-    renderScore();
-
-    for(int y = 0; y < HEIGHT; y++){
-        center();
-        printf("█ ");
-        for(int x = 0; x < WIDTH; x++){
-            // if 1 dont print . char 
-            int at = 0;
-            //render current shape
-            for(int i = 0; i < 4; i++){
-                Point cube = currentShape->cubes[i];
-                Point pcube = previewShape->cubes[i];
-                if( currentShape->pos.x+cube.x == x &&
-                        currentShape->pos.y+cube.y == y){
-                    renderPoint(cube);
-                    at = 1;
-                }
-            }
-            if(!at){
-                for(int i = 0; i < 4; i++){
-                    Point cube = currentShape->cubes[i];
-                    if( previewShape->pos.x+cube.x == x &&
-                            previewShape->pos.y+cube.y == y){
-                        renderPointChar(cube,"[]");
-                        at = 1;
-                    }
-                }
-
-            }
-            for(int j = 0; j < fallenCount; j++){
-                Point cube = fallenCubes[j];
-                if( cube.x == x &&
-                        cube.y == y){
-                    renderPoint(cube);
-                    at = 1;
-                }
-            }
-            if(!at)
-                printf("· ");
-        }
-        printf("█\n");
-    }
-    center();
-    printf("███████████████████████\n");
-    printf("\e[?25l");
+    render(currentShape,previewShape, fallenCubes, fallenCount); 
+    // system("clear");
+    // if(paused){
+    //     center();
+    //     printf("Press p to continue");
+    // }
+    // renderScore();
+    //
+    // for(int y = 0; y < HEIGHT; y++){
+    //     center();
+    //     printf("█ ");
+    //     for(int x = 0; x < WIDTH; x++){
+    //         // if 1 dont print . char 
+    //         int at = 0;
+    //         //render current shape
+    //         for(int i = 0; i < 4; i++){
+    //             Point cube = currentShape->cubes[i];
+    //             Point pcube = previewShape->cubes[i];
+    //             if( currentShape->pos.x+cube.x == x &&
+    //                     currentShape->pos.y+cube.y == y){
+    //                 renderPoint(cube);
+    //                 at = 1;
+    //             }
+    //         }
+    //         if(!at){
+    //             for(int i = 0; i < 4; i++){
+    //                 Point cube = currentShape->cubes[i];
+    //                 if( previewShape->pos.x+cube.x == x &&
+    //                         previewShape->pos.y+cube.y == y){
+    //                     renderPointChar(cube,"[]");
+    //                     at = 1;
+    //                 }
+    //             }
+    //
+    //         }
+    //         for(int j = 0; j < fallenCount; j++){
+    //             Point cube = fallenCubes[j];
+    //             if( cube.x == x &&
+    //                     cube.y == y){
+    //                 renderPoint(cube);
+    //                 at = 1;
+    //             }
+    //         }
+    //         if(!at)
+    //             printf("· ");
+    //     }
+    //     printf("█\n");
+    // }
+    // center();
+    // printf("███████████████████████\n");
+    // printf("\e[?25l");
 }
 
 void setPreview(Shape shape){
     // loop though all cubes 
     for(int i = 0; i < 4; i++){
         //check if it collides att bottom and upwards
-        for(int r = 0; r < 20-currentShape->pos.y; r++){
+        for(int r = 0; r < HEIGHT-currentShape->pos.y; r++){
             // if collides set the previewShape position
             if(collides(*currentShape,newPoint(0, r+1), fallenCubes,fallenCount)){
                 previewShape = newShape(shape.pos.x, currentShape->pos.y+r, shape.type);
@@ -185,7 +187,7 @@ int removeFullRow(){
     int count = 0; // amount of cubes on a row
     int rows = 0; // rows that are full
     //begin from bottom (want to remove bottom up)
-    for(int r = 20; r >= 0; r--){
+    for(int r = HEIGHT; r >= 0; r--){
         count = 0;
         //count amount on row 
         for(int c = 0; c < fallenCount; c++){ // hehe c++ hehe

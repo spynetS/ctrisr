@@ -3,18 +3,8 @@
 #endif
 #include <stdio.h>
 #include <stdlib.h>
+#include "shapes.h"
 
-typedef struct {
-    int x;
-    int y;
-    char *color;
-} Point;
-
-typedef struct {
-    Point pos; // global space
-    Point cubes[4]; //cubes localspace
-    int type;
-} Shape;
 
 Point newPoint(int x, int y){
     
@@ -117,9 +107,9 @@ int collides(Shape currentShape,Point nextStep ,Point *fallenCubes, int fallenCo
     for(int sc = 0; sc < 4; sc++){ // for every cube in currentShape shape cube
 
         Point shapeCube = currentShape.cubes[sc]; 
-        if(shapeCube.y + currentShape.pos.y == 20) return 1; // hit the bottom
-        if(shapeCube.x + currentShape.pos.x < 0) return 1;
-        if(shapeCube.x + currentShape.pos.x >=10) return 1;
+        if(shapeCube.y + currentShape.pos.y == 21) return 1; // hit the bottom
+        if(shapeCube.x + currentShape.pos.x <  1 ) return 1;
+        if(shapeCube.x + currentShape.pos.x >  10) return 1;
 
         for(int fc = 0; fc < fallenCount; fc++){ // for every cube in fallenShape fallen cube
             Point fallenCube = fallenCubes[fc]; //that cube
