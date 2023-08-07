@@ -1,6 +1,6 @@
 #pragma once
 #include "shapes.h"
-#include "../printer/src/Canvas.h"
+#include "../Printer/src/Canvas.h"
 
 
 Canvas *getCurrentCanvas();

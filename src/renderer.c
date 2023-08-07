@@ -1,5 +1,5 @@
 #include "renderer.h"
-#include "../printer/src/Canvas.h"
+#include "../Printer/src/Canvas.h"
 #include <stdio.h>
 Canvas * canvas;
 
