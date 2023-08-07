@@ -1,14 +1,21 @@
 #include "renderer.h"
 #include "../printer/src/Canvas.h"
 #include <stdio.h>
+Canvas * canvas;
 
-Canvas* canvas;
-void initRenderer(){
-    canvas = newCanvas(12,22,"| ",BLACK,BG_BLACK);
+Canvas* getCurrentCanvas() {
+    return canvas;
 }
 
+void initRenderer(){
+    canvas = newCanvas(12,22,"[]",BLACK,BG_BLACK);
+}
+
+void renderCubeChar(Point p, int x, int y, char* car){
+    setPixel(canvas,p.x+x,p.y+y,car,p.color,BG_BLACK);
+}
 void renderCube(Point p, int x, int y){
-    setPixel(canvas,p.x+x,p.y+y,"🮔",p.color,BG_BLACK);
+    renderCubeChar(p,x,y,"🮔 ");
 }
 
 void render(Shape* currentShape, Shape* previewShape, Point  *fallenCubes, int fallenCount){
@@ -17,11 +24,11 @@ void render(Shape* currentShape, Shape* previewShape, Point  *fallenCubes, int f
     clearPixels(canvas);
     //print the walls
     for(int i = 0; i < canvas->height; i++){
-        setPixel(canvas,0 ,i,"🮔",WHITE,BG_BLACK);
-        setPixel(canvas,canvas->width-1,i,"🮔",WHITE,BG_BLACK);
+        setPixel(canvas,0 ,i,"🮔 ",WHITE,BG_BLACK);
+        setPixel(canvas,canvas->width-1,i,"🮔 ",WHITE,BG_BLACK);
     }
     for(int i = 0; i < canvas->width; i++){
-        setPixel(canvas,i ,canvas->height-1,"🮔",WHITE,BG_BLACK);
+        setPixel(canvas,i ,canvas->height-1,"🮔 ",WHITE,BG_BLACK);
     }
 
     for(int i = 0; i < 4; i++){
@@ -37,7 +44,7 @@ void render(Shape* currentShape, Shape* previewShape, Point  *fallenCubes, int f
 
         int x = previewShape->pos.x;
         int y = previewShape->pos.y;
-        setPixel(canvas,pcube.x+x,pcube.y+y,"🮔",pcube.color,BG_BLACK);
+        renderCube(pcube,x,y);
     }                                                        
     for(int j = 0; j < fallenCount; j++){
         Point cube = fallenCubes[j];

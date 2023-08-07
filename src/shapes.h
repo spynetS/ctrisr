@@ -18,4 +18,5 @@ int collides(Shape currentShape,Point nextStep ,Point *fallenCubes, int fallenCo
 void rotate(Shape *shape);
 int rotateCollide(Shape shape,Point* fallenCubes,int count);
 int rotateCollide(Shape shape,Point* fallenCubes,int count);
+void renderPoint(Point point);
 void renderPointChar(Point point, char* car);

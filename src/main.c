@@ -236,6 +236,20 @@ void setNewShape(){
     setPreview(*currentShape); 
 }
 
+// draw full blocks where preview was to f;ash it
+void flashPreview(){
+    for(int i = 0; i < 4; i++){
+        Point cube = currentShape->cubes[i];
+
+        int x = currentShape->pos.x;
+        int y = currentShape->pos.y;
+        renderCubeChar(cube, x, y,"██");
+    }
+    draw(getCurrentCanvas());
+    msleep(200);
+
+}
+
 int main(){
     
     // retrive terminal width and height
@@ -292,6 +306,9 @@ int main(){
             if(key == ' ' && !collides(*currentShape,newPoint(0,1),&fallenCubes[0],fallenCount)&& !paused){
                 //fallDelay = 0;
                 currentShape->pos.y = previewShape->pos.y;
+                
+                flashPreview();
+
                 score++;
             }
             if(key == 'd' && !collides(*currentShape,newPoint(1,0),&fallenCubes[0],fallenCount)&& !paused){

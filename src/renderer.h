@@ -1,6 +1,10 @@
 #pragma once
 #include "shapes.h"
+#include "../printer/src/Canvas.h"
 
+
+Canvas *getCurrentCanvas();
 void initRenderer();
-void renderPoint(Point p);
+void renderCube(Point p,int x, int y);
+void renderCubeChar(Point p,int x, int y, char* car);
 void render(Shape* currentShape, Shape* previewShape, Point  *fallenCubes, int fallenCount);
