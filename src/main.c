@@ -58,66 +58,13 @@ void startScreen(){
     system("stty cooked");
 }
 
-void renderScore(){
-    for(int i = 0; i< (w.ws_row-HEIGHT)/4; i++){
-        printf("\n");
-    }
-    center();
-    printf("███████████████████████\n");
-    center();
-    printf("█         Score       █\n");
-
-    center();
-    if(score < 10){
-        printf("█          %d          █\n",score);
-    }
-    else if(score >= 1000){
-        printf("█         %d        █\n",score);
-    }
-    else if(score >= 100){
-        printf("█         %d         █\n",score);
-    }
-    else if(score >= 10){
-        printf("█          %d         █\n",score);
-    }
-    center();
-    printf("█                     █\n");
-    // render saved shape
-    center();
-    printf("█      ");
-    for(int y = 0; y < 5; y ++){
-        for(int x = 0; x < 5; x ++){
-            int rendered = 0;
-            if(savedShape != NULL){
-                for(int i = 0; i < 4; i++){
-                    Point cube = savedShape->cubes[i];
-                    cube.x += 2;//currentShape->pos.x;
-                    cube.y += 2;//currentShape->pos.y;
-                    if( cube.x == x &&
-                        cube.y == y){
-                        renderPoint(cube);
-                        rendered = 1;
-
-                    }
-                }
-            }
-            if(rendered == 0) 
-                printf(". ");
-        }
-        printf("     █\n");
-        center();
-        printf("█      ");
-
-    }
-    printf("               █\n");
-
-    center();
-    printf("███████████████████████\n");
-}
 
 
 void renderWorld(Shape *currentShape){
+
+
     render(currentShape,previewShape, fallenCubes, fallenCount); 
+    renderScore(score,savedShape); 
     // system("clear");
     // if(paused){
     //     center();

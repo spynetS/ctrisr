@@ -1,4 +1,6 @@
 #pragma once
+
+
 /*BG_BLACK    (Alfred Roos 2023-07-29)
     USE AS IS
     This library makes printing to the termninal alot easier.
@@ -104,6 +106,8 @@ prints:
 */
 typedef struct canvas
 {
+    int x;
+    int y;
     int width;
     int height;
     Pixel bgPixel;
@@ -152,7 +156,6 @@ void setBgOfPixel(Canvas *canvas, int x, int y, char* bgcolor);
 void addString(Canvas*, char *newStr);
 
 void setFullScreen(Canvas* canvas);
-
 /** prints all the pixels set in the canvas (prints with a space after to make it appear square)*/
 void draw(Canvas *canvas);
 /** frees the canvas */
@@ -163,10 +166,14 @@ Pixel *newPixel(int x, int y, char* ch, char* color, char* bgcolor);
 Canvas *newCanvas(int width, int height, char* bgCh, char* color, char* bgcolor);
 
 //mcs.c
-int Printer_kbhit(void); //returns 1 if key was pressed
-char Printer_getKeyPressed(); // returns char if it was pressed otherwise [
-int Printer_msleep(long msec);
+int kbhit(void); //returns 1 if key was pressed
+char getKeyPressed(); // returns char if it was pressed otherwise [
+int msleep(long msec);
 // Function to disable terminal echoing
 void disableEcho();
 // Function to enable terminal echoing
 void enableEcho();
+
+unsigned int termWidth();
+unsigned int termHeight();
+

@@ -3,8 +3,10 @@
 #include "../Printer/src/Canvas.h"
 
 
+Canvas* getScoreCanvas();
 Canvas *getCurrentCanvas();
 void initRenderer();
 void renderCube(Point p,int x, int y);
 void renderCubeChar(Point p,int x, int y, char* car);
 void render(Shape* currentShape, Shape* previewShape, Point  *fallenCubes, int fallenCount);
+void renderScore(int score, Shape* savedShape);

@@ -6,9 +6,10 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
+#include <stdio.h>
 #include "Canvas.h"
 
-int Printer_msleep(long msec)
+int msleep(long msec)
 {
     struct timespec ts;
     int res;
@@ -44,7 +45,7 @@ void enableEcho() {
     tcsetattr(STDIN_FILENO, TCSANOW, &term);
 }
 
-int Printer_kbhit(void)
+int kbhit(void)
 {
   struct termios oldt, newt;
   int ch;
@@ -71,8 +72,8 @@ int Printer_kbhit(void)
   return 0;
 }
 
-char Printer_getKeyPressed(){
-    if(Printer_kbhit() == 1){
+char getKeyPressed(){
+    if(kbhit() == 1){
         return ((char)getchar());
     }
     return '[';
