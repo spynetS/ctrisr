@@ -108,6 +108,8 @@ void draw(Canvas *canvas){
 
         int i = 0;
         int bgSize = strlen(canvas->bgPixel.ch);
+        //for unicode it gets fucked otherwise if a unicode is looking like 1 it is actually 4 
+        bgSize = bgSize > 1 ? 2 : 1;
         for(int y = 0; y < canvas->height;y++){
             for(int x = 0; x < canvas->width*bgSize;x+=bgSize){
                 Pixel p = canvas->pixels[i];
@@ -172,45 +174,6 @@ void setCharAt(int x, int y, char *c) {
 }
 void setRender(Canvas *canvas){
 
-    char* render = malloc(sizeof(char*)*canvas->height*canvas->width*3);
-    
-    int x = 0;
-    for(int i = 0; i < canvas->width*canvas->height; i++){
-        Pixel pixel = canvas->pixels[i];
-
-        if(strlen(canvas->bgPixel.ch) > 1 && strlen(pixel.ch) < 2)
-            sprintf(render,"%s%s%s%s ",render,pixel.color,pixel.bgcolor,pixel.ch);
-        else
-            sprintf(render,"%s%s%s%s",render,pixel.color,pixel.bgcolor,pixel.ch);
-
-        sprintf(render,"%s%s",render,RESET);
-        // if x == width -1 we start on the next row
-        if(x == canvas->width-1){
-            sprintf(render,"%s\n",render);
-            x=-1;
-        }
-        x++;
-    }
-    sprintf(render,"%s\033[?25l",render);
-
-    if(canvas->render != NULL){
-        printf("check");
-        int i = 0;
-        for(int x = 0; x < canvas->width;x++){
-            for(int y = 0; y < canvas->height;y++){
-                printf("%c : %c",canvas->render[i], render[i]);
-                if(canvas->render[i] != render[i]){
-                    char str[2];
-                    str[0] = render[i];
-                    str[1] = '\0';
-                    setCharAt(x, y, str);
-                }
-                i++;
-            }
-        }
-    }
-    setCharAt(canvas->width, canvas->height, "");
-    canvas->render = render;
 }
 
 void setPixel(Canvas *canvas, int _x, int _y, char* ch, char* color, char* bgcolor){

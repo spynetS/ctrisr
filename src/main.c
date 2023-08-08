@@ -21,100 +21,13 @@ Shape *previewShape;
 Shape *savedShape;
 
 
-void end(){
-    printf("\nYou got %d\n",score);
-    printf("\e[?25h");
-    exit(0);
-}
-void center(){
-    for(int i = 0; i< w.ws_col/2-WIDTH; i++){
-        printf(" ");
-    }
-}
-
-void startScreen(){
-    system("clear");
-    for(int i = 0; i< w.ws_row/2-5; i++){
-        printf("\n");
-    }
-    center();
-    printf("          CTRISR\n\n");
-    center();
-    printf("         q to quit\n");
-    center();
-    printf("         p to pause\n");
-    center();
-    printf("         e to save\n");
-    center();
-    printf("   'a d' move side ways\n");
-    center();
-    printf("'w' rotate, 's' to move down\n\n");
-    center();
-    printf("    Press any key to start\n");
-    center();
-    printf("\e[?25l");
-    system("stty raw");
-    getchar();
-    system("stty cooked");
-}
-
-
 
 void renderWorld(Shape *currentShape){
 
 
     render(currentShape,previewShape, fallenCubes, fallenCount); 
     renderScore(score,savedShape); 
-    // system("clear");
-    // if(paused){
-    //     center();
-    //     printf("Press p to continue");
-    // }
-    // renderScore();
-    //
-    // for(int y = 0; y < HEIGHT; y++){
-    //     center();
-    //     printf("█ ");
-    //     for(int x = 0; x < WIDTH; x++){
-    //         // if 1 dont print . char 
-    //         int at = 0;
-    //         //render current shape
-    //         for(int i = 0; i < 4; i++){
-    //             Point cube = currentShape->cubes[i];
-    //             Point pcube = previewShape->cubes[i];
-    //             if( currentShape->pos.x+cube.x == x &&
-    //                     currentShape->pos.y+cube.y == y){
-    //                 renderPoint(cube);
-    //                 at = 1;
-    //             }
-    //         }
-    //         if(!at){
-    //             for(int i = 0; i < 4; i++){
-    //                 Point cube = currentShape->cubes[i];
-    //                 if( previewShape->pos.x+cube.x == x &&
-    //                         previewShape->pos.y+cube.y == y){
-    //                     renderPointChar(cube,"[]");
-    //                     at = 1;
-    //                 }
-    //             }
-    //
-    //         }
-    //         for(int j = 0; j < fallenCount; j++){
-    //             Point cube = fallenCubes[j];
-    //             if( cube.x == x &&
-    //                     cube.y == y){
-    //                 renderPoint(cube);
-    //                 at = 1;
-    //             }
-    //         }
-    //         if(!at)
-    //             printf("· ");
-    //     }
-    //     printf("█\n");
-    // }
-    // center();
-    // printf("███████████████████████\n");
-    // printf("\e[?25l");
+
 }
 
 void setPreview(Shape shape){
@@ -130,6 +43,8 @@ void setPreview(Shape shape){
         }
     }
 }
+
+
 int removeFullRow(){
     int count = 0; // amount of cubes on a row
     int rows = 0; // rows that are full
@@ -148,6 +63,7 @@ int removeFullRow(){
             for(int c = 0; c < fallenCount; c++){ // hehe c++ hehe
                 if(fallenCubes[c].y == r){
                     // should free this value instead of move
+                    destroyCube(fallenCubes[c]);
                     fallenCubes[c].y = 100;
                     renderWorld(currentShape);
                     msleep(30);
@@ -183,19 +99,7 @@ void setNewShape(){
     setPreview(*currentShape); 
 }
 
-// draw full blocks where preview was to f;ash it
-void flashPreview(){
-    for(int i = 0; i < 4; i++){
-        Point cube = currentShape->cubes[i];
 
-        int x = currentShape->pos.x;
-        int y = currentShape->pos.y;
-        renderCubeChar(cube, x, y,"██");
-    }
-    draw(getCurrentCanvas());
-    msleep(200);
-
-}
 
 int main(){
     
@@ -226,7 +130,7 @@ int main(){
             //get key
             char key = getchar();
             if(key == 'q'){
-                end();
+                end(score);
             }
             if(key == 'e'){
                 //save shape
@@ -258,7 +162,7 @@ int main(){
                 //fallDelay = 0;
                 currentShape->pos.y = previewShape->pos.y;
                 
-                flashPreview();
+                flashPreview(currentShape);
 
                 score++;
             }
@@ -296,9 +200,9 @@ int main(){
                     renderTime =0;
                 }
             }else{
-                //end
+                //end score
                 if(currentShape->pos.y == -1){
-                    end();
+                    end(score);
                 }
                 //add cubes to fallen array and add shape pos to them
                 for(int i = 0; i < 4; i++){
@@ -315,6 +219,6 @@ int main(){
         }
     }
 
-    end();
+    end(score);
 }
 
