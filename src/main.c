@@ -282,13 +282,17 @@ int main(){
                 end();
             }
             if(key == 'e'){
+                //save shape
                 if(savedShape == NULL){
                     savedShape = currentShape;
                     setNewShape();
                 }
+                //retrive
                 else{
                     Shape *temp = currentShape;
                     currentShape = savedShape;
+                    currentShape->pos.y = temp->pos.y;
+                    currentShape->pos.x = temp->pos.x;
                     savedShape = temp;
                 }
             }
