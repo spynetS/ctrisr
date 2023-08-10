@@ -5,7 +5,7 @@
 
 int music = 0;
 
-char* cubeStr         = "⏹ ";
+char* cubeStr         = "██";//⏹
 char* wallStr         = " ";
 char* destroyCubeStr1 = "▓█";
 char* destroyCubeStr2 = "▒▒";
