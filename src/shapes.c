@@ -107,7 +107,7 @@ int collides(Shape currentShape,Point nextStep ,Point *fallenCubes, int fallenCo
     for(int sc = 0; sc < 4; sc++){ // for every cube in currentShape shape cube
 
         Point shapeCube = currentShape.cubes[sc]; 
-        if(shapeCube.y + currentShape.pos.y == 21) return 1; // hit the bottom
+        if(shapeCube.y + currentShape.pos.y == 20) return 1; // hit the bottom
         if(shapeCube.x + currentShape.pos.x <  1 ) return 1;
         if(shapeCube.x + currentShape.pos.x >  10) return 1;
 

@@ -4,12 +4,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "config.h"
+#include "sound.h"
 
 Canvas *scoreCanvas;
 Canvas * canvas;
 
-char* cubeStr = " ";
-// char* cubeStr = "🞒";
+
+
+
 
 Canvas* getCurrentCanvas() {
     return canvas;
@@ -109,26 +112,29 @@ void renderScore(int score, Shape* savedShape){
 }
 
 void destroyCube(Point cube){
-    setPixel(getCurrentCanvas(), cube.x, cube.y, "▓█",cube.color,BG_BLACK);
+    setPixel(getCurrentCanvas(), cube.x, cube.y, destroyCubeStr1,cube.color,BG_BLACK);
     draw(getCurrentCanvas());
     msleep(10);
 
-    setPixel(getCurrentCanvas(), cube.x, cube.y, "▒▒",cube.color,BG_BLACK);
+    setPixel(getCurrentCanvas(), cube.x, cube.y, destroyCubeStr2,cube.color,BG_BLACK);
     draw(getCurrentCanvas());
     msleep(10);
 
-    setPixel(getCurrentCanvas(), cube.x, cube.y, "░░",cube.color,BG_BLACK);
+    setPixel(getCurrentCanvas(), cube.x, cube.y, destroyCubeStr3,cube.color,BG_BLACK);
     draw(getCurrentCanvas());
     msleep(10);
 }
 // draw full blocks where preview was to f;ash it
 void flashPreview(Shape *currentShape){
+    note('c',300,1);
+    note('E',100,1);
+
     for(int i = 0; i < 4; i++){
         Point cube = currentShape->cubes[i];
 
         int x = currentShape->pos.x;
         int y = currentShape->pos.y;
-        renderCubeChar(cube, x, y,"██");
+        renderCubeChar(cube, x, y,flashCubeStr);
     }
     draw(getCurrentCanvas());
     msleep(200);

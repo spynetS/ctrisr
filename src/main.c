@@ -3,6 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "renderer.h"
+#include <pthread.h>
+#include "sound.h"
+#include "config.h"
+#include "../flagcer/flagser.h"
 
 #define WIDTH 11
 #define HEIGHT 22
@@ -48,6 +52,7 @@ void setPreview(Shape shape){
 int removeFullRow(){
     int count = 0; // amount of cubes on a row
     int rows = 0; // rows that are full
+    int removed = 1;
     //begin from bottom (want to remove bottom up)
     for(int r = HEIGHT; r >= 0; r--){
         count = 0;
@@ -64,9 +69,11 @@ int removeFullRow(){
                 if(fallenCubes[c].y == r){
                     // should free this value instead of move
                     destroyCube(fallenCubes[c]);
+                    Beep(300+(removed * 10), 100);
                     fallenCubes[c].y = 100;
                     renderWorld(currentShape);
                     msleep(30);
+                    removed ++;
                 }
             }
             //move above down
@@ -100,9 +107,29 @@ void setNewShape(){
 }
 
 
-
-int main(){
+void *myThreadFun(void *vargp)
+{
+    if(music == 1){
+        while(1){
+            playMusic();
+        }
+    }
     
+    return NULL;
+}
+
+
+int main(int argc, char **argv){
+    
+
+    args(argc, argv);
+
+    pthread_t thread_id;
+    pthread_create(&thread_id, NULL, myThreadFun, NULL);
+
+    /*
+     * create a nw thread and start playing the music there
+     */  
     // retrive terminal width and height
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w); 
    
@@ -220,5 +247,6 @@ int main(){
     }
 
     end(score);
+    pthread_join(thread_id, NULL);
 }
 
