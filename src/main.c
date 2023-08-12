@@ -69,7 +69,11 @@ int removeFullRow(){
                 if(fallenCubes[c].y == r){
                     // should free this value instead of move
                     destroyCube(fallenCubes[c]);
-                    // Beep(300+(removed * 10), 100);
+
+                    BeepThread(300+(removed * 10), 100);
+                    if(removed == 39){
+                        BeepThread(700, 800);
+                    }
 
                     fallenCubes[c].y = 100;
 

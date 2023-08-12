@@ -35,6 +35,7 @@ void initRenderer(){
 }
 
 char * getCubeStr(char* color){
+    // return wallStr;
     if(strcmp(color,BLUE) == 0){
         return "🟦";
     }
@@ -147,8 +148,7 @@ void destroyCube(Point cube){
 }
 // draw full blocks where preview was to f;ash it
 void flashPreview(Shape *currentShape){
-    // Beep(420,300);
-    // Beep(520,100);
+    BeepThread(420,300);
 
     for(int i = 0; i < 4; i++){
         Point cube = currentShape->cubes[i];

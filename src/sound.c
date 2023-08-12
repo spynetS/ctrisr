@@ -20,25 +20,27 @@ void Beep(double freq, int duration){
 
 }
 
-void *beep(double freq, int duration){
-    snd_pcm_t *pcm;
-    snd_pcm_open(&pcm, "default", SND_PCM_STREAM_PLAYBACK, 0);
-    snd_pcm_set_params(pcm, SND_PCM_FORMAT_S16_LE, SND_PCM_ACCESS_RW_INTERLEAVED, 1, 48000, 1, 50000);
+typedef struct beepArgs{
+	double freq;
+	int duration;
+}BeepArgs;
 
-    short buf[48000 * duration / 1000];
-    for (int i = 0; i < sizeof(buf)/sizeof(buf[0]); i++) {
-        buf[i] = 32767 * sin(2 * M_PI * freq * i / 48000.0);
-    }
+void *beep(void *vargp){
 
-    snd_pcm_writei(pcm, buf, sizeof(buf)/sizeof(buf[0]));
-    snd_pcm_close(pcm);
+    BeepArgs *args = vargp;
+
+    Beep(args->freq,args->duration);
+
     return NULL;
 }
 
 void BeepThread(double freq, int duration){
     pthread_t thread_id;
-    pthread_create(&thread_id, NULL, beep(freq,duration), NULL);
-    pthread_join(thread_id, NULL);
+    BeepArgs *args = malloc(sizeof(BeepArgs));
+    args->freq = freq;
+    args->duration = duration;
+    pthread_create(&thread_id, NULL, beep, args);
+    //pthread_join(thread_id, NULL);
 	
 }
 
