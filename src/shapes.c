@@ -30,7 +30,7 @@ Shape *newShape(int x, int y, int type){
         shape->cubes[2] = newPoint(1,0);
         shape->cubes[3] = newPoint(2,0);
         for(int i = 0; i < 4; i++){
-            strcpy(shape->cubes[i].color, "\033[0;36m");
+            strcpy(shape->cubes[i].color, "\033[36m");
         }
     }
     //L
@@ -40,7 +40,7 @@ Shape *newShape(int x, int y, int type){
         shape->cubes[2] = newPoint(1,0);
         shape->cubes[3] = newPoint(1,1);
         for(int i = 0; i < 4; i++){
-            strcpy(shape->cubes[i].color, "\033[31;1m");
+            strcpy(shape->cubes[i].color, "\033[31m");
         }
     }
     
@@ -51,7 +51,7 @@ Shape *newShape(int x, int y, int type){
         shape->cubes[2] = newPoint(0,0);
         shape->cubes[3] = newPoint(1,0);
         for(int i = 0; i < 4; i++){
-            strcpy(shape->cubes[i].color, "\033[0;34m");
+            strcpy(shape->cubes[i].color, "\033[34m");
         }
     }
     //t
@@ -61,7 +61,7 @@ Shape *newShape(int x, int y, int type){
         shape->cubes[2] = newPoint(0,1);
         shape->cubes[3] = newPoint(1,0);
         for(int i = 0; i < 4; i++){
-            strcpy(shape->cubes[i].color, "\033[0;35m");
+            strcpy(shape->cubes[i].color, "\033[35m");
         }
     }
     //o
@@ -71,7 +71,7 @@ Shape *newShape(int x, int y, int type){
         shape->cubes[2] = newPoint(0,1);
         shape->cubes[3] = newPoint(1,0);
         for(int i = 0; i < 4; i++){
-            strcpy(shape->cubes[i].color, "\033[0;33m");
+            strcpy(shape->cubes[i].color, "\033[33m");
         }
     }
     //s
@@ -81,7 +81,7 @@ Shape *newShape(int x, int y, int type){
         shape->cubes[2] = newPoint(0,1);
         shape->cubes[3] = newPoint(1,1);
         for(int i = 0; i < 4; i++){
-            strcpy(shape->cubes[i].color, "\033[0;32m");
+            strcpy(shape->cubes[i].color, "\033[32m");
         }
     }
     //z
@@ -91,7 +91,7 @@ Shape *newShape(int x, int y, int type){
         shape->cubes[2] = newPoint(1,0);
         shape->cubes[3] = newPoint(0,0);
         for(int i = 0; i < 4; i++){
-            strcpy(shape->cubes[i].color, "\033[0;31m");
+            strcpy(shape->cubes[i].color, "\033[31m");
         }
     }
     return shape;
@@ -107,7 +107,7 @@ int collides(Shape currentShape,Point nextStep ,Point *fallenCubes, int fallenCo
     for(int sc = 0; sc < 4; sc++){ // for every cube in currentShape shape cube
 
         Point shapeCube = currentShape.cubes[sc]; 
-        if(shapeCube.y + currentShape.pos.y == 20) return 1; // hit the bottom
+        if(shapeCube.y + currentShape.pos.y == 21) return 1; // hit the bottom
         if(shapeCube.x + currentShape.pos.x <  1 ) return 1;
         if(shapeCube.x + currentShape.pos.x >  10) return 1;
 

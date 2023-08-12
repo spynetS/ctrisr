@@ -3,6 +3,7 @@ void initVariables();
 
 extern int music;
 extern char* cubeStr;
+extern char* wallStr;
 extern char* destroyCubeStr1;
 extern char* destroyCubeStr2;
 extern char* destroyCubeStr3;

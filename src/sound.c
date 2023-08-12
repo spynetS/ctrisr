@@ -1,4 +1,5 @@
 #include <math.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <alsa/asoundlib.h>
@@ -17,6 +18,28 @@ void Beep(double freq, int duration){
     snd_pcm_writei(pcm, buf, sizeof(buf)/sizeof(buf[0]));
     snd_pcm_close(pcm);
 
+}
+
+void *beep(double freq, int duration){
+    snd_pcm_t *pcm;
+    snd_pcm_open(&pcm, "default", SND_PCM_STREAM_PLAYBACK, 0);
+    snd_pcm_set_params(pcm, SND_PCM_FORMAT_S16_LE, SND_PCM_ACCESS_RW_INTERLEAVED, 1, 48000, 1, 50000);
+
+    short buf[48000 * duration / 1000];
+    for (int i = 0; i < sizeof(buf)/sizeof(buf[0]); i++) {
+        buf[i] = 32767 * sin(2 * M_PI * freq * i / 48000.0);
+    }
+
+    snd_pcm_writei(pcm, buf, sizeof(buf)/sizeof(buf[0]));
+    snd_pcm_close(pcm);
+    return NULL;
+}
+
+void BeepThread(double freq, int duration){
+    pthread_t thread_id;
+    pthread_create(&thread_id, NULL, beep(freq,duration), NULL);
+    pthread_join(thread_id, NULL);
+	
 }
 
 void note(char _c, int duration, double octave)

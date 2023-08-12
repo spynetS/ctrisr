@@ -69,7 +69,7 @@ int removeFullRow(){
                 if(fallenCubes[c].y == r){
                     // should free this value instead of move
                     destroyCube(fallenCubes[c]);
-                    Beep(300+(removed * 10), 100);
+                    // Beep(300+(removed * 10), 100);
 
                     fallenCubes[c].y = 100;
 
@@ -249,6 +249,5 @@ int main(int argc, char **argv){
     }
 
     end(score);
-    pthread_join(thread_id, NULL);
 }
 
