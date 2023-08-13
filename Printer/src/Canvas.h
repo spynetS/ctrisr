@@ -146,6 +146,7 @@ void setRender(Canvas *canvas);
 void clearPixels(Canvas *canvas);
 /** sets the pixel at x,y with the data */
 void setPixel(Canvas *canvas, int _x, int _y, char* ch, char* color, char* bgcolor);
+void setPixelRaw(Canvas *canvas, int _x, int _y, char* ch, char* color, char* bgcolor);
 /** set the pixel with the pixel arg */
 void setPixelWithPixel(Canvas *canvas, Pixel *pixel);
 /** Sets the text at begining of x and at row y */
@@ -164,6 +165,8 @@ void freeCanvas(Canvas *canvas);
 Pixel *newPixel(int x, int y, char* ch, char* color, char* bgcolor);
 /** returns new canvas with the data */
 Canvas *newCanvas(int width, int height, char* bgCh, char* color, char* bgcolor);
+
+void setBorder(Canvas *canvas,int borderWith);
 
 //mcs.c
 int kbhit(void); //returns 1 if key was pressed
