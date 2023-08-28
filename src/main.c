@@ -24,14 +24,11 @@ Shape *currentShape;
 Shape *previewShape;
 Shape *savedShape;
 
-
-
 void renderWorld(Shape *currentShape){
 
 
     render(currentShape,previewShape, fallenCubes, fallenCount); 
-    renderScore(score,savedShape); 
-
+    renderScore(score,savedShape);
 }
 
 void setPreview(Shape shape){
@@ -78,7 +75,7 @@ int removeFullRow(){
                     fallenCubes[c].y = 100;
 
                     renderWorld(currentShape);
-                    msleep(30);
+                    printer_msleep(30);
                     removed ++;
                 }
             }
@@ -148,7 +145,7 @@ int main(int argc, char **argv){
 
     int renderTime = 0; 
     while(1){
-        msleep(50);
+        printer_msleep(50);
         if(fallDeleyDecreser == 0){
             fallDelay --;
             fallDeleyDecreser = 500;
@@ -159,7 +156,7 @@ int main(int argc, char **argv){
 
 
         //key pressed?
-        if(kbhit()){
+        if(printer_kbhit()){
             //get key
             char key = getchar();
             if(key == 'q'){
@@ -168,16 +165,16 @@ int main(int argc, char **argv){
             if(key == 'e'){
                 //save shape
                 if(savedShape == NULL){
-                    savedShape = currentShape;
+                    savedShape = newShape(0,0,currentShape->type);
                     setNewShape();
                 }
                 //retrive
                 else{
                     Shape *temp = currentShape;
-                    currentShape = savedShape;
-                    currentShape->pos.y = temp->pos.y;
-                    currentShape->pos.x = temp->pos.x;
-                    savedShape = temp;
+                    currentShape = newShape(currentShape->pos.x, currentShape->pos.y,savedShape->type);
+                    // currentShape->pos.y = temp->pos.y;
+                    // currentShape->pos.x = temp->pos.x;
+                    savedShape = newShape(0,0,temp->type);
                 }
             }
             if(key == 'p'){

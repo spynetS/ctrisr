@@ -1,5 +1,5 @@
 #include "renderer.h"
-#include "../Printer/src/Canvas.h"
+#include "../../printer/src/Canvas.h"
 #include "shapes.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,7 +22,7 @@ Canvas* getScoreCanvas() {
 }
 
 void initRenderer(){
-    int width = 12;
+    int width = 10;
     canvas = newCanvas(width,22,"  ",WHITE,BG_BLACK);
  
     canvas->x = termWidth()/2-width/2;
@@ -32,6 +32,7 @@ void initRenderer(){
     scoreCanvas->y = 2;
 
     scoreCanvas->x = termWidth()/2-width/2;
+    setBorder(canvas,0);
 }
 
 char * getCubeStr(char* color){
@@ -70,13 +71,13 @@ void render(Shape* currentShape, Shape* previewShape, Point  *fallenCubes, int f
     
     clearPixels(canvas);
     //print the walls
-    for(int i = 0; i < canvas->height; i++){
-        setPixel(canvas,0 ,i,wallStr,CYAN,BG_BLACK);
-        setPixel(canvas,canvas->width-1,i,wallStr,CYAN,BG_BLACK);
-    }
-    for(int i = 0; i < canvas->width; i++){
-        setPixel(canvas,i ,canvas->height-1,wallStr,CYAN,BG_BLACK);
-    }
+    // for(int i = 0; i < canvas->height; i++){
+    //     setPixel(canvas,0 ,i,wallStr,CYAN,BG_BLACK);
+    //     setPixel(canvas,canvas->width-1,i,wallStr,CYAN,BG_BLACK);
+    // }
+    // for(int i = 0; i < canvas->width; i++){
+    //     setPixel(canvas,i ,canvas->height-1,wallStr,CYAN,BG_BLACK);
+    // }
 
     for(int i = 0; i < 4; i++){
         Point cube = currentShape->cubes[i];
@@ -106,14 +107,14 @@ void render(Shape* currentShape, Shape* previewShape, Point  *fallenCubes, int f
 void renderScore(int score, Shape* savedShape){
     
     clearPixels(scoreCanvas);
-    for(int i = 0; i < scoreCanvas->height; i++){
-        setPixel(scoreCanvas,0 ,i,wallStr,CYAN,BG_BLACK);
-        setPixel(scoreCanvas,scoreCanvas->width-1,i,wallStr,CYAN,BG_BLACK);
-    }
-    for(int i = 0; i < scoreCanvas->width; i++){
-        setPixel(scoreCanvas,i ,scoreCanvas->height-1,wallStr,CYAN,BG_BLACK);
-        setPixel(scoreCanvas,i ,0,wallStr,CYAN,BG_BLACK);
-    }
+    // for(int i = 0; i < scoreCanvas->height; i++){
+    //     setPixel(scoreCanvas,0 ,i,wallStr,CYAN,BG_BLACK);
+    //     setPixel(scoreCanvas,scoreCanvas->width-1,i,wallStr,CYAN,BG_BLACK);
+    // }
+    // for(int i = 0; i < scoreCanvas->width; i++){
+    //     setPixel(scoreCanvas,i ,scoreCanvas->height-1,wallStr,CYAN,BG_BLACK);
+    //     setPixel(scoreCanvas,i ,0,wallStr,CYAN,BG_BLACK);
+    // }
 
     char *scoreStr= malloc(sizeof(char*));
     sprintf(scoreStr, "S%d", score);
@@ -136,15 +137,15 @@ void renderScore(int score, Shape* savedShape){
 void destroyCube(Point cube){
     setPixel(getCurrentCanvas(), cube.x, cube.y, destroyCubeStr1,cube.color,BG_BLACK);
     draw(getCurrentCanvas());
-    msleep(10);
+    printer_msleep(10);
 
     setPixel(getCurrentCanvas(), cube.x, cube.y, destroyCubeStr2,cube.color,BG_BLACK);
     draw(getCurrentCanvas());
-    msleep(10);
+    printer_msleep(10);
 
     setPixel(getCurrentCanvas(), cube.x, cube.y, destroyCubeStr3,cube.color,BG_BLACK);
     draw(getCurrentCanvas());
-    msleep(10);
+    printer_msleep(10);
 }
 // draw full blocks where preview was to f;ash it
 void flashPreview(Shape *currentShape){
@@ -158,7 +159,7 @@ void flashPreview(Shape *currentShape){
         renderCubeChar(cube, x, y,flashCubeStr);
     }
     draw(getCurrentCanvas());
-    msleep(200);
+    printer_msleep(200);
 
 }
 void end(int score){

@@ -1,6 +1,6 @@
 #pragma once
 #include "shapes.h"
-#include "../Printer/src/Canvas.h"
+#include "../../printer/src/Canvas.h"
 
 
 Canvas* getScoreCanvas();

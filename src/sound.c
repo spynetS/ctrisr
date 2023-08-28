@@ -1,5 +1,6 @@
 #include <math.h>
 #include <pthread.h>
+#include "../../printer/src/Canvas.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <alsa/asoundlib.h>
@@ -35,12 +36,15 @@ void *beep(void *vargp){
 }
 
 void BeepThread(double freq, int duration){
-    pthread_t thread_id;
+
     BeepArgs *args = malloc(sizeof(BeepArgs));
     args->freq = freq;
     args->duration = duration;
+
+    pthread_t thread_id;
     pthread_create(&thread_id, NULL, beep, args);
     //pthread_join(thread_id, NULL);
+    free(args);
 	
 }
 
@@ -137,7 +141,7 @@ int playMusic(){
 
 	note('a', 400, oct);
 	// ##############
-	//Sleep(400);
+	printer_msleep(400);
 	// ##############
 	five:
 	note('D', 400, oct);
@@ -176,7 +180,7 @@ int playMusic(){
 
 	note('a', 400, oct);
 	// ##############
-	//Sleep(400);
+	printer_msleep(400);
 	// ##############
 	//goto one;
 
