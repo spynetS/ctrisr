@@ -37,14 +37,14 @@ void *beep(void *vargp){
 
 void BeepThread(double freq, int duration){
 
-    BeepArgs *args = malloc(sizeof(BeepArgs));
-    args->freq = freq;
-    args->duration = duration;
-
-    pthread_t thread_id;
-    pthread_create(&thread_id, NULL, beep, args);
-    //pthread_join(thread_id, NULL);
-    free(args);
+    // BeepArgs *args = malloc(sizeof(BeepArgs));
+    // args->freq = freq;
+    // args->duration = duration;
+    //
+    // pthread_t thread_id;
+    // pthread_create(&thread_id, NULL, beep, args);
+    // //pthread_join(thread_id, NULL);
+    // free(args);
 	
 }
 
