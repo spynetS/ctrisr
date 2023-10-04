@@ -24,11 +24,14 @@ Shape *currentShape;
 Shape *previewShape;
 Shape *savedShape;
 
+
+
 void renderWorld(Shape *currentShape){
 
 
     render(currentShape,previewShape, fallenCubes, fallenCount); 
-    renderScore(score,savedShape);
+    renderScore(score,savedShape); 
+
 }
 
 void setPreview(Shape shape){
