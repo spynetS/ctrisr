@@ -1,350 +1,164 @@
-#include "shapes.c"
-#include "msc.c"
+#include "../lib/Canvas.h"
+#include "shapes.h"
+#include <string.h>
+#include <stdlib.h>
 #include <stdio.h>
 
-#define WIDTH 10
-#define HEIGHT 20
+int HEIGHT = 15;
+Canvas* c;
+Shape* currentShape;
+Point* fallenCubes[15*10];
+int fallCount = 0;
+char* PIXEL = "⬜";
 
-
-int paused = 0;
-Point fallenCubes[1000]; // all places 
-int fallenCount = 0; //keep count of how many has fallen
-int score       = 0; 
-int fallDelay   = 20; // how long to wait to fall
-int fallDeleyDecreser = 500; // when zero decrese fallDelay
-struct winsize w;
-
-Shape *currentShape;
-Shape *previewShape;
-Shape *savedShape;
-
-
-void end(){
-    printf("\nYou got %d\n",score);
-    printf("\e[?25h");
-    exit(0);
-}
-void center(){
-    for(int i = 0; i< w.ws_col/2-WIDTH; i++){
-        printf(" ");
-    }
+// -- RENDER FUNCTIONS --
+void setCube(Canvas *c, Point cube){
+  setPixel(c, cube.x, cube.y, PIXEL, cube.color,BG_BLACK);
 }
 
-void startScreen(){
-    system("clear");
-    for(int i = 0; i< w.ws_row/2-5; i++){
-        printf("\n");
-    }
-    center();
-    printf("          CTRISR\n\n");
-    center();
-    printf("         q to quit\n");
-    center();
-    printf("         p to pause\n");
-    center();
-    printf("         e to save\n");
-    center();
-    printf("   'a d' move side ways\n");
-    center();
-    printf("'w' rotate, 's' to move down\n\n");
-    center();
-    printf("    Press any key to start\n");
-    center();
-    printf("\e[?25l");
-    system("stty raw");
-    getchar();
-    system("stty cooked");
+void setShape(Shape* currentShape, Canvas* c){
+
+  for(int i = 0; i < 4; i ++){
+    setPixel(c,currentShape->cubes[i].x+currentShape->pos.x,
+            currentShape->cubes[i].y+currentShape->pos.y,
+            PIXEL,BLUE,BG_BLACK);
+  }
 }
 
-void renderScore(){
-    for(int i = 0; i< (w.ws_row-HEIGHT)/4; i++){
-        printf("\n");
-    }
-    center();
-    printf("███████████████████████\n");
-    center();
-    printf("█         Score       █\n");
+void render(){
 
-    center();
-    if(score < 10){
-        printf("█          %d          █\n",score);
-    }
-    else if(score >= 1000){
-        printf("█         %d        █\n",score);
-    }
-    else if(score >= 100){
-        printf("█         %d         █\n",score);
-    }
-    else if(score >= 10){
-        printf("█          %d         █\n",score);
-    }
-    center();
-    printf("█                     █\n");
-    // render saved shape
-    center();
-    printf("█      ");
-    for(int y = 0; y < 5; y ++){
-        for(int x = 0; x < 5; x ++){
-            int rendered = 0;
-            if(savedShape != NULL){
-                for(int i = 0; i < 4; i++){
-                    Point cube = savedShape->cubes[i];
-                    cube.x += 2;//currentShape->pos.x;
-                    cube.y += 2;//currentShape->pos.y;
-                    if( cube.x == x &&
-                        cube.y == y){
-                        renderPoint(cube);
-                        rendered = 1;
+    char buffer[10];
+    sprintf(buffer,"%d",fallCount);
 
-                    }
-                }
-            }
-            if(rendered == 0) 
-                printf(". ");
-        }
-        printf("     █\n");
-        center();
-        printf("█      ");
+    setText(c,0,0,buffer,BLUE,BG_BLACK);
 
+    //draw shape
+    setShape(currentShape,c);
+    //setAllFallen
+    for(int i = 0; i < fallCount; i++){
+      setCube(c,*fallenCubes[i]);
     }
-    printf("               █\n");
 
-    center();
-    printf("███████████████████████\n");
+    draw(c);
+    clearPixels(c);
+
 }
+// -- LOGIC FUNCTIONS --
 
-
-void renderWorld(Shape *currentShape){
-    
-    system("clear");
-    if(paused){
-        center();
-        printf("Press p to continue");
-    }
-    renderScore();
-
-    for(int y = 0; y < HEIGHT; y++){
-        center();
-        printf("█ ");
-        for(int x = 0; x < WIDTH; x++){
-            // if 1 dont print . char 
-            int at = 0;
-            //render current shape
-            for(int i = 0; i < 4; i++){
-                Point cube = currentShape->cubes[i];
-                Point pcube = previewShape->cubes[i];
-                if( currentShape->pos.x+cube.x == x &&
-                        currentShape->pos.y+cube.y == y){
-                    renderPoint(cube);
-                    at = 1;
-                }
-            }
-            if(!at){
-                for(int i = 0; i < 4; i++){
-                    Point cube = currentShape->cubes[i];
-                    if( previewShape->pos.x+cube.x == x &&
-                            previewShape->pos.y+cube.y == y){
-                        renderPointChar(cube,"[]");
-                        at = 1;
-                    }
-                }
-
-            }
-            for(int j = 0; j < fallenCount; j++){
-                Point cube = fallenCubes[j];
-                if( cube.x == x &&
-                        cube.y == y){
-                    renderPoint(cube);
-                    at = 1;
-                }
-            }
-            if(!at)
-                printf("· ");
-        }
-        printf("█\n");
-    }
-    center();
-    printf("███████████████████████\n");
-    printf("\e[?25l");
-}
-
-void setPreview(Shape shape){
-    // loop though all cubes 
+//adds all cubes from the currentShape to the array
+//and sets a new currentShape
+void newCurr(){
     for(int i = 0; i < 4; i++){
-        //check if it collides att bottom and upwards
-        for(int r = 0; r < 20-currentShape->pos.y; r++){
-            // if collides set the previewShape position
-            if(collides(*currentShape,newPoint(0, r+1), fallenCubes,fallenCount)){
-                previewShape = newShape(shape.pos.x, currentShape->pos.y+r, shape.type);
-                return;
-            }
-        }
+    int x = currentShape->cubes[i].x+currentShape->pos.x;
+    int y = currentShape->cubes[i].y+currentShape->pos.y;
+    Point *cube = malloc(sizeof(Point));
+    cube->x=x;
+    cube->y=y;
+    cube->color = malloc(sizeof(char)*11);
+    strcpy(cube->color, "\033[36m");
+
+    fallenCubes[fallCount] = cube;
+    fallCount++;
     }
+    freeShape(currentShape);
+    currentShape = newShape(3,0,0);
 }
-int removeFullRow(){
-    int count = 0; // amount of cubes on a row
-    int rows = 0; // rows that are full
-    //begin from bottom (want to remove bottom up)
-    for(int r = 20; r >= 0; r--){
-        count = 0;
-        //count amount on row 
-        for(int c = 0; c < fallenCount; c++){ // hehe c++ hehe
-            if(fallenCubes[c].y == r){
-                count++;
-            }
-        }
-        if(count == 10){
-            //remove chars
-            rows++;
-            for(int c = 0; c < fallenCount; c++){ // hehe c++ hehe
-                if(fallenCubes[c].y == r){
-                    // should free this value instead of move
-                    fallenCubes[c].y = 100;
-                    renderWorld(currentShape);
-                    msleep(30);
-                }
-            }
-            //move above down
-            for(int c = 0; c < fallenCount; c++){ // hehe c++ hehe
-                if(fallenCubes[c].y < r){
-                    fallenCubes[c].y++; 
-                }
-                //renderWorld(currentShape);
-            }
-            r++;
-        }
+//returns 1 if there is a cube in the fallenCubes array with the position
+int isThereAFallenCubeHere(int x, int y){
+  for(int i = 0; i < fallCount; i ++){
+    if(fallenCubes[i]->x == x && fallenCubes[i]->y==y){
+      return 1;
     }
-    setPreview(*currentShape);
-    return rows;
+  }
+  return 0;
 }
 
-void updateScore(int rows){
-    if(rows == 1) score += 40;
-    if(rows == 2) score += 100;
-    if(rows == 3) score += 300;
-    if(rows == 4) score += 1200;
+//removes cubes on the row y coordinate
+void removeRow(int row){
+  //create a temp array and add all cubes not in the row
+  Point* fallenCubesNew[10*15];
+  int count = 0;
+  for(int i = 0; i < fallCount; i++){
+    if(fallenCubes[i]->y != row){
+      fallenCubesNew[count] = fallenCubes[i];
+      count++;
+    }
+  }
+  // set all right cubes to the main array
+  for(int i = 0; i < count; i ++){
+    fallenCubes[i] = fallenCubesNew[i];
+  }
+  fallCount = count;
 }
 
-void setNewShape(){
-    // get random number (shape)
-    srand(time(0));
-    int number = (rand() % (5 - 0 + 1)) + 0;
-    currentShape = newShape(4,-1,number);
-    previewShape = newShape(4,-1,number);
-    setPreview(*currentShape); 
+//makes the cubes above the row goes doen 1 unit
+void dropAbove(int row){
+  for(int i = 0; i < fallCount; i ++){
+    if(fallenCubes[i]->y < row){
+      fallenCubes[i]->y++;
+    }
+  }
+
 }
+
+//checks if a row is full if so remove it and make the above go down
+void fullRow(){
+  for(int i = HEIGHT; i >= 0; i --){
+    int count = 0;
+    for(int x = 0; x < 10; x++){
+      if(isThereAFallenCubeHere(x,i)) count++;
+    }
+    if(count == 9){
+      removeRow(i);
+      dropAbove(i);
+    }
+  }
+}
+
 
 int main(){
-    
-    // retrive terminal width and height
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w); 
-   
-    startScreen();
+  c = newCanvas(10,HEIGHT,"  ",BLACK,BG_BLACK);
+  c->x = termWidth()/2-5;
+  c->y = termHeight()/2-(HEIGHT/2);
 
-    //create current shape
-    currentShape = newShape(5,1,2);
-    //create a placed preview
-    previewShape = newShape(1,16,0);
-
-    int renderTime = 0; 
-    while(1){
-        msleep(50);
-        if(fallDeleyDecreser == 0){
-            fallDelay --;
-            fallDeleyDecreser = 500;
-        }
-        fallDeleyDecreser--;
-        //amount of rows deleted addes score
-        updateScore(removeFullRow());
+  currentShape = newShape(0,0,0);
+  currentShape->pos.x = 3;
+  currentShape->pos.y = 3;
 
 
-        //key pressed?
-        if(kbhit()){
-            //get key
-            char key = getchar();
-            if(key == 'q'){
-                end();
-            }
-            if(key == 'e'){
-                if(savedShape == NULL){
-                    savedShape = currentShape;
-                    setNewShape();
-                }
-                else{
-                    Shape *temp = currentShape;
-                    currentShape = savedShape;
-                    savedShape = temp;
-                }
-            }
-            if(key == 'p'){
-                paused = paused==1?0:1;
-            }
-            if(key == 'a' && !collides(*currentShape,newPoint(-1,0),&fallenCubes[0],fallenCount) && !paused){
-                currentShape->pos.x--;
-            }
-            if(key == 's' && !collides(*currentShape,newPoint(0,1),&fallenCubes[0],fallenCount)&& !paused){
-                //fallDelay = 0;
-                currentShape->pos.y ++;
-                score++;
-            }
-            if(key == ' ' && !collides(*currentShape,newPoint(0,1),&fallenCubes[0],fallenCount)&& !paused){
-                //fallDelay = 0;
-                currentShape->pos.y = previewShape->pos.y;
-                score++;
-            }
-            if(key == 'd' && !collides(*currentShape,newPoint(1,0),&fallenCubes[0],fallenCount)&& !paused){
-                currentShape->pos.x++;
-            }
-            else if(key == 'w'&& !paused){
-                // if shape collides when rotate move it either right or left
-                for(int i = 0; i < 4; i++){ // 4 is max length
-                    if(rotateCollide(*currentShape, &fallenCubes[0], fallenCount)){
-                        if(currentShape->pos.x < 5 && !collides(*currentShape, newPoint(1,0),&fallenCubes[0],fallenCount) ){
-                            currentShape->pos.x++;
-                        }else if(!collides(*currentShape, newPoint(-1,0),&fallenCubes[0],fallenCount)){
-                            currentShape->pos.x--;
-                        }
-                    }else{
-                        rotate(currentShape);
-                        break;
-                    }
-                }
-                // then rotate
-            }
+  int tick = 0;
+  while(1){
+    //check if there is a full row
+    fullRow();
 
-            //calculate where places preview should be
-            setPreview(*currentShape); 
-            renderWorld(currentShape);
-        }
-        if(!paused){
-
-            // move shape down
-            if(!collides(*currentShape, newPoint(0,1), &fallenCubes[0], fallenCount) ){
-                if(renderTime > fallDelay){
-                    currentShape->pos.y++;
-                    renderWorld(currentShape);
-                    renderTime =0;
-                }
-            }else{
-                //end
-                if(currentShape->pos.y == -1){
-                    end();
-                }
-                //add cubes to fallen array and add shape pos to them
-                for(int i = 0; i < 4; i++){
-                    Point newCube = currentShape->cubes[i];
-                    newCube.x += currentShape->pos.x;
-                    newCube.y += currentShape->pos.y;
-                    fallenCubes[fallenCount] = newCube;
-                    fallenCount++;
-                }
-                setNewShape();
-                score++;
-            }
-            renderTime++;
-        }
+    char keyInput = getKeyPressed();
+    if(keyInput == 'd'){
+      if(!collides(*currentShape,newPoint(1,0),fallenCubes,fallCount))
+        currentShape->pos.x++;
+    }
+    if(keyInput == 'a'){
+      if(!collides(*currentShape,newPoint(-1,0),fallenCubes,fallCount))
+        currentShape->pos.x--;
+    }
+    if(keyInput == 'w'){
+      if(!rotateCollide(*currentShape, fallenCubes,fallCount))
+        rotate(currentShape);
     }
 
-    end();
-}
+    if(tick % 10 == 0){
+      currentShape->pos.y++;
+    }
 
+    for(int i = 0; i < 4; i ++){
+        if(currentShape->cubes[i].y+currentShape->pos.y >= HEIGHT-2 ||
+           collides(*currentShape,newPoint(0,1),fallenCubes,fallCount)){
+          newCurr();
+        }
+    }
+    render();
+    msleep(30);
+    tick++;
+  }
+
+  return 0;
+}
