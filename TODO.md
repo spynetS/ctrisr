@@ -1,0 +1,6 @@
+- [ ] Random shapes
+- [ ] Different colors of the shapes (color string or different unicode chars)
+- [ ] Start menu
+- [ ] Pause menu
+- [ ] Speed up
+- [ ] Save and get shape
