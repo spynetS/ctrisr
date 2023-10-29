@@ -153,6 +153,8 @@ void setPixelWithPixel(Canvas *canvas, Pixel *pixel);
 /** Sets the text at begining of x and at row y */
 void setText(Canvas *canvas, int _x, int _y, char* text, char* color, char* bgcolor);
 
+void setCenterText(Canvas *canvas, int _x, int _y, char* text, char* color, char* bgcolor);
+
 void setBgOfPixel(Canvas *canvas, int x, int y, char* bgcolor);
 /** Internal function. Adds string to a list so we can free it later */
 void addString(Canvas*, char *newStr);

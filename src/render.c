@@ -43,6 +43,8 @@ void renderSaved(Canvas* saved, Shape shape){
     shape.pos.x = 1;
     setShape(&shape,saved);
 
+    setText(saved, 0,0,"Hold",WHITE,BG_BLACK);
+
     setBorder(saved,1);
     draw(saved);
 }
@@ -62,6 +64,7 @@ void renderNext(Canvas* c, int nexts[]){
 void renderWorld(Canvas* c, Shape* currentShape,Shape* previewShape, Point** fallenCubes, int fallCount){
 
 
+    setText(c,2,0,"CTRISR",WHITE,BG_BLACK);
     //draw shape
     setShape(currentShape,c);
     setShapeWithChar(previewShape,c,"[]");

@@ -2,6 +2,7 @@
 #include "shapes.h"
 #include "render.h"
 #include <string.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -12,6 +13,7 @@ Canvas* savedCanvas;
 Canvas* nextCanvas;
 Canvas* scoreCanvas;
 Canvas* pauseScreen;
+Canvas* startCanvas;
 
 Shape* currentShape;
 Shape* previewShape;
@@ -20,12 +22,37 @@ Shape* savedShape;
 int next[3]; // list containg the next shapes
 
 int paused = 0;
+int started = 0;
 int score = 0;
 
-Point* fallenCubes[15*10];
+Point* fallenCubes[22*10];
 int fallCount = 0;
 
 // -- LOGIC FUNCTIONS --
+
+void exitCtrisr(int signal){
+    system("clear");
+    printf(SHOW_CURSOR);
+    //free the canvases
+    freeCanvas(c);
+    freeCanvas(savedCanvas);
+    freeCanvas(nextCanvas);
+    freeCanvas(scoreCanvas);
+    freeCanvas(pauseScreen);
+
+    //free cubes
+    for(int i = 0; i < fallCount; i++){
+        free(fallenCubes[i]->color);
+        free(fallenCubes[i]);
+    }
+
+
+    freeShape(currentShape);
+    freeShape(previewShape);
+    freeShape(savedShape);
+
+    exit(0);
+}
 //adds all cubes from the currentShape to the array
 //and sets a new currentShape
 void newCurr(){
@@ -44,7 +71,7 @@ void newCurr(){
     freeShape(currentShape);
 
     //set it to the first in the list
-    currentShape = newShape(4,0,next[0]);
+    currentShape = newShape(4,1,next[0]);
     //update the next list
     srand(time(0));
     int number = (rand() % (5 - 0 + 1)) + 0;
@@ -105,7 +132,7 @@ int fullRow(){
     for(int x = 0; x < 10; x++){
       if(isThereAFallenCubeHere(x,i)) count++;
     }
-    if(count == 9){
+    if(count == 10){
       for(int j = 0; j < fallCount; j ++){
         if(fallenCubes[j]->y == i){
           fallenCubes[j]->y=100;
@@ -158,7 +185,7 @@ void movement(int tick){
         initPixels(pauseScreen);
         setText(pauseScreen, 26/2-7,0,"Paused, press p",WHITE,BG_BLACK);
         setText(pauseScreen, 26/2-5,1,"to unpause",WHITE,BG_BLACK);
-        setText(pauseScreen, 0,4,"Save shape by pressing e",WHITE,BG_BLACK);
+        setText(pauseScreen, 0,4,"Hold shape by pressing e",WHITE,BG_BLACK);
         setText(pauseScreen, 26/2-6,6,"Quit with q",WHITE,BG_BLACK);
 
         draw(pauseScreen);
@@ -176,13 +203,11 @@ void movement(int tick){
       }
     }
     if(keyInput == 'q'){
-      system("clear");
-      printf(SHOW_CURSOR);
-      exit(0);
+        exitCtrisr(0);
     }
     if(keyInput == 'e'){
 
-      if(savedShape == NULL){
+      if(savedShape->cubes[0].x==-100){
         savedShape = currentShape;
         currentShape = newShape(4,1,1);
       }
@@ -224,37 +249,56 @@ void setPreviewShape(Shape shape){
     }
 }
 
+
 int main(){
+  //make so ctr+c will run the exit code
+  signal(SIGINT, exitCtrisr);
+
   next[0] = 0;
   next[1] = 1;
   next[2] = 2;
 
-  c = newCanvas(10,HEIGHT,"  ",WHITE,BG_BLACK);
-  c->x = termWidth()/2-5;
+  c = newCanvas(11,HEIGHT+1,". ",WHITE,BG_BLACK);
+  c->x = termWidth()/2-11;
   c->y = termHeight()/2-(HEIGHT/2);
-  setBorder(c,1);
 
   savedCanvas = newCanvas(6,5,"  ",WHITE,BG_BLACK);
-  savedCanvas->x = termWidth()/2-18;
+  savedCanvas->x = termWidth()/2-(24);
   savedCanvas->y = termHeight()/2 - (HEIGHT/2);
 
   nextCanvas = newCanvas(5,4*3+1, "  ", WHITE,BG_BLACK);
-  nextCanvas->x = termWidth()/2+16;
+  nextCanvas->x = termWidth()/2+12;
   nextCanvas->y = termHeight()/2 - (HEIGHT/2);
 
-  pauseScreen = newCanvas(26,10,"  ",WHITE,BG_BLACK);
-  pauseScreen->x = termWidth()/2-26;
+  pauseScreen = newCanvas(26,10," ",WHITE,BG_BLACK);
+  pauseScreen->x = termWidth()/2-26/2;
   pauseScreen->y = termHeight()/2-(HEIGHT/2);
 
   scoreCanvas = newCanvas(6,5,"  ",WHITE,BG_BLACK);
-  scoreCanvas->x = termWidth()/2-18;
-  scoreCanvas->y = termHeight()/2 ;
+  scoreCanvas->x = termWidth()/2-24;
+  scoreCanvas->y = termHeight()/2-(HEIGHT/2)+6 ;
 
+  startCanvas = newCanvas(34,10, " ",WHITE,BG_BLACK);
+  startCanvas->x = termWidth()/2-32/2;
+  startCanvas->y = termHeight()/2-(HEIGHT/2);
 
+  savedShape = newShape(0,0,1000);
   previewShape = newShape(0,0,0);
   currentShape = newShape(0,0,0);
   currentShape->pos.x = 3;
   currentShape->pos.y = 3;
+
+  setCenterText(startCanvas,16,0,"CTRISR",WHITE,BG_BLACK);
+  setCenterText(startCanvas,16,1,"Q to quit",WHITE,BG_BLACK);
+  setCenterText(startCanvas,16,2,"E to hold",WHITE,BG_BLACK);
+  setCenterText(startCanvas,16,3,"W to rotate",WHITE,BG_BLACK);
+  setCenterText(startCanvas,16,4,"AD to go sideways",WHITE,BG_BLACK);
+  setCenterText(startCanvas,16,5,"SPACE to place at bottom",WHITE,BG_BLACK);
+  setCenterText(startCanvas,16,7,"Press any key to start the game",WHITE,BG_BLACK);
+  draw(startCanvas);
+  setBorder(startCanvas,1);
+
+  char temp = getchar();
 
   int tick = 0;
   while(1){
@@ -270,7 +314,7 @@ int main(){
 
     //check if the currentShape has fallen down
     for(int i = 0; i < 4; i ++){
-        if(currentShape->cubes[i].y+currentShape->pos.y >= HEIGHT-2 ||
+        if(currentShape->cubes[i].y+currentShape->pos.y >= HEIGHT ||
            collides(*currentShape,newPoint(0,1),fallenCubes,fallCount)){
           newCurr();
         }
@@ -281,8 +325,7 @@ int main(){
 
       renderNext(nextCanvas,next);
       clearPixels(savedCanvas);
-      if(savedShape != NULL)
-        renderSaved(savedCanvas, *savedShape);
+      renderSaved(savedCanvas, *savedShape);
 
     }
 
