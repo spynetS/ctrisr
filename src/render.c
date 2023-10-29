@@ -28,7 +28,8 @@ void renderSaved(Canvas* saved, Shape shape){
 void renderNext(Canvas* c, int nexts[]){
 
   clearPixels(c);
-  setShape(newShape(0,0,nexts[0]),c);
+  setText(c,-1,0,"Next",WHITE,BG_BLACK);
+  setShape(newShape(0,1,nexts[0]),c);
   setShape(newShape(0,4,nexts[1]),c);
   setShape(newShape(0,8,nexts[2]),c);
 
