@@ -1,7 +1,7 @@
-- [ ] Random shapes
-- [ ] Different colors of the shapes (color string or different unicode chars)
+- [x] Random shapes
+- [x] Different colors of the shapes (color string or different unicode chars)
 - [ ] Start menu
-- [ ] Pause menu
+- [x] Pause menu
 - [ ] Speed up
-- [ ] Save and get shape
-- [ ] different canvases showing different things
+- [x] Save and get shape
+- [x] different canvases showing different things

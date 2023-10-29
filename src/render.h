@@ -13,5 +13,6 @@ void renderWorld(Canvas* c, Shape* currentShape, Shape* previewShape ,Point** fa
 
 void renderSaved(Canvas* saved, Shape shape);
 void renderNext(Canvas* c, int nexts[]);
+void renderScore(Canvas* scoreCanvas,int score);
 
 #endif // RENDER_H_

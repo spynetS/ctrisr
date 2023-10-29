@@ -11,11 +11,16 @@ Canvas* c;
 Canvas* savedCanvas;
 Canvas* nextCanvas;
 Canvas* scoreCanvas;
+Canvas* pauseScreen;
 
 Shape* currentShape;
 Shape* previewShape;
 Shape* savedShape;
+
 int next[3]; // list containg the next shapes
+
+int paused = 0;
+int score = 0;
 
 Point* fallenCubes[15*10];
 int fallCount = 0;
@@ -39,7 +44,7 @@ void newCurr(){
     freeShape(currentShape);
 
     //set it to the first in the list
-    currentShape = newShape(4,-1,next[0]);
+    currentShape = newShape(4,0,next[0]);
     //update the next list
     srand(time(0));
     int number = (rand() % (5 - 0 + 1)) + 0;
@@ -85,8 +90,16 @@ void dropAbove(int row){
 
 }
 
+void updateScore(int rows){
+    if(rows == 1) score += 40;
+    if(rows == 2) score += 100;
+    if(rows == 3) score += 300;
+    if(rows == 4) score += 1200;
+}
+
 //checks if a row is full if so remove it and make the above go down
-void fullRow(){
+int fullRow(){
+  int removed = 0;
   for(int i = HEIGHT; i >= 0; i --){
     int count = 0;
     for(int x = 0; x < 10; x++){
@@ -104,8 +117,11 @@ void fullRow(){
       }
       removeRow(100);
       dropAbove(i);
+      removed++;
+      i++;
     }
   }
+  return removed;
 }
 
 int amountToFall(Shape shape){
@@ -136,6 +152,34 @@ void movement(int tick){
         rotate(currentShape);
         rotate(previewShape);
     }
+    if(keyInput == 'p'){
+      if(!paused){
+        system("clear");
+        initPixels(pauseScreen);
+        setText(pauseScreen, 26/2-7,0,"Paused, press p",WHITE,BG_BLACK);
+        setText(pauseScreen, 26/2-5,1,"to unpause",WHITE,BG_BLACK);
+        setText(pauseScreen, 0,4,"Save shape by pressing e",WHITE,BG_BLACK);
+        setText(pauseScreen, 26/2-6,6,"Quit with q",WHITE,BG_BLACK);
+
+        draw(pauseScreen);
+        setBorder(pauseScreen,2);
+
+        paused = 1;
+      }
+      else{
+        system("clear");
+        initPixels(c);
+        initPixels(nextCanvas);
+        initPixels(savedCanvas);
+        initPixels(scoreCanvas);
+        paused = 0;
+      }
+    }
+    if(keyInput == 'q'){
+      system("clear");
+      printf(SHOW_CURSOR);
+      exit(0);
+    }
     if(keyInput == 'e'){
 
       if(savedShape == NULL){
@@ -146,8 +190,11 @@ void movement(int tick){
         Shape* temp = savedShape;
         temp->pos.x = currentShape->pos.x;
         temp->pos.y = currentShape->pos.y;
-        savedShape = currentShape;
-        currentShape = temp;
+        if(!collides(*temp,newPoint(0,0),fallenCubes,fallCount)){
+          savedShape = currentShape;
+          currentShape = temp;
+        }
+
       }
 
     }
@@ -187,13 +234,21 @@ int main(){
   c->y = termHeight()/2-(HEIGHT/2);
   setBorder(c,1);
 
-  savedCanvas = newCanvas(4,4,"  ",WHITE,BG_BLACK);
-  savedCanvas->x = termWidth()/2-14;
+  savedCanvas = newCanvas(6,5,"  ",WHITE,BG_BLACK);
+  savedCanvas->x = termWidth()/2-18;
   savedCanvas->y = termHeight()/2 - (HEIGHT/2);
 
-  nextCanvas = newCanvas(4,4*3, "  ", WHITE,BG_BLACK);
-  nextCanvas->x = termWidth()/2+17;
+  nextCanvas = newCanvas(5,4*3+1, "  ", WHITE,BG_BLACK);
+  nextCanvas->x = termWidth()/2+16;
   nextCanvas->y = termHeight()/2 - (HEIGHT/2);
+
+  pauseScreen = newCanvas(26,10,"  ",WHITE,BG_BLACK);
+  pauseScreen->x = termWidth()/2-26;
+  pauseScreen->y = termHeight()/2-(HEIGHT/2);
+
+  scoreCanvas = newCanvas(6,5,"  ",WHITE,BG_BLACK);
+  scoreCanvas->x = termWidth()/2-18;
+  scoreCanvas->y = termHeight()/2 ;
 
 
   previewShape = newShape(0,0,0);
@@ -204,10 +259,9 @@ int main(){
   int tick = 0;
   while(1){
     //check if there is a full row
-    fullRow();
+    updateScore(fullRow());
 
-
-    if(tick % 10 == 0){
+    if(!paused && tick % 10 == 0){
       currentShape->pos.y++;
     }
     movement(tick);
@@ -221,15 +275,16 @@ int main(){
           newCurr();
         }
     }
-    renderWorld(c,currentShape,previewShape,fallenCubes,fallCount);
+    if(!paused){
+      renderWorld(c,currentShape,previewShape,fallenCubes,fallCount);
+      renderScore(scoreCanvas,score);
 
-    renderNext(nextCanvas,next);
+      renderNext(nextCanvas,next);
+      clearPixels(savedCanvas);
+      if(savedShape != NULL)
+        renderSaved(savedCanvas, *savedShape);
 
-    clearPixels(savedCanvas);
-    if(savedShape != NULL)
-      renderSaved(savedCanvas, *savedShape);
-
-
+    }
 
     msleep(50);
     tick++;
