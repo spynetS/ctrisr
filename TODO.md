@@ -1,3 +1,6 @@
+## Todo
+
+
 - [x] Random shapes
 - [x] Different colors of the shapes (color string or different unicode chars)
 - [ ] Start menu
