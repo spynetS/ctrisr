@@ -13,16 +13,31 @@ void setShape(Shape* currentShape, Canvas* c){
   for(int i = 0; i < 4; i ++){
     setPixel(c,currentShape->cubes[i].x+currentShape->pos.x,
             currentShape->cubes[i].y+currentShape->pos.y,
-            PIXEL,BLUE,BG_BLACK);
+            PIXEL,currentShape->cubes[i].color,BG_BLACK);
   }
+}
+
+
+void renderSaved(Canvas* saved, Shape shape){
+
+    shape.pos.y = 0;
+    shape.pos.x = 0;
+    setShape(&shape,saved);
+    draw(saved);
+}
+void renderNext(Canvas* c, int nexts[]){
+
+  clearPixels(c);
+  setShape(newShape(0,0,nexts[0]),c);
+  setShape(newShape(0,4,nexts[1]),c);
+  setShape(newShape(0,8,nexts[2]),c);
+
+  draw(c);
+
 }
 
 void renderWorld(Canvas* c, Shape* currentShape,Shape* previewShape, Point** fallenCubes, int fallCount){
 
-    char buffer[10];
-    sprintf(buffer,"%d",fallCount);
-
-    setText(c,0,0,buffer,BLUE,BG_BLACK);
 
     //draw shape
     setShape(currentShape,c);
