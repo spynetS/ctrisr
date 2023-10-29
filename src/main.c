@@ -1,50 +1,18 @@
 #include "../lib/Canvas.h"
 #include "shapes.h"
+#include "render.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 
-int HEIGHT = 15;
+int HEIGHT = 20;
 Canvas* c;
 Shape* currentShape;
+Shape* previewShape;
 Point* fallenCubes[15*10];
 int fallCount = 0;
-char* PIXEL = "⬜";
 
-// -- RENDER FUNCTIONS --
-void setCube(Canvas *c, Point cube){
-  setPixel(c, cube.x, cube.y, PIXEL, cube.color,BG_BLACK);
-}
-
-void setShape(Shape* currentShape, Canvas* c){
-
-  for(int i = 0; i < 4; i ++){
-    setPixel(c,currentShape->cubes[i].x+currentShape->pos.x,
-            currentShape->cubes[i].y+currentShape->pos.y,
-            PIXEL,BLUE,BG_BLACK);
-  }
-}
-
-void render(){
-
-    char buffer[10];
-    sprintf(buffer,"%d",fallCount);
-
-    setText(c,0,0,buffer,BLUE,BG_BLACK);
-
-    //draw shape
-    setShape(currentShape,c);
-    //setAllFallen
-    for(int i = 0; i < fallCount; i++){
-      setCube(c,*fallenCubes[i]);
-    }
-
-    draw(c);
-    clearPixels(c);
-
-}
 // -- LOGIC FUNCTIONS --
-
 //adds all cubes from the currentShape to the array
 //and sets a new currentShape
 void newCurr(){
@@ -109,27 +77,34 @@ void fullRow(){
       if(isThereAFallenCubeHere(x,i)) count++;
     }
     if(count == 9){
-      removeRow(i);
+      for(int j = 0; j < fallCount; j ++){
+        if(fallenCubes[j]->y == i){
+          fallenCubes[j]->y=100;
+
+          clearPixels(c);
+          renderWorld(c,currentShape,previewShape,fallenCubes,fallCount);
+          msleep(100);
+        }
+      }
+      removeRow(100);
       dropAbove(i);
     }
   }
 }
 
+int amountToFall(Shape shape){
+  for(int i = shape.pos.y; i < HEIGHT;i ++){
+    for(int j = 0; j < 4; j ++){
+        if(shape.cubes[j].y+shape.pos.y+i >= HEIGHT-2 ||
+           collides(shape,newPoint(0,i),fallenCubes,fallCount)){
+          return i-1;
+        }
+    }
+  }
+  return shape.pos.y;
+}
 
-int main(){
-  c = newCanvas(10,HEIGHT,"  ",BLACK,BG_BLACK);
-  c->x = termWidth()/2-5;
-  c->y = termHeight()/2-(HEIGHT/2);
-
-  currentShape = newShape(0,0,0);
-  currentShape->pos.x = 3;
-  currentShape->pos.y = 3;
-
-
-  int tick = 0;
-  while(1){
-    //check if there is a full row
-    fullRow();
+void movement(int tick){
 
     char keyInput = getKeyPressed();
     if(keyInput == 'd'){
@@ -143,20 +118,70 @@ int main(){
     if(keyInput == 'w'){
       if(!rotateCollide(*currentShape, fallenCubes,fallCount))
         rotate(currentShape);
+        rotate(previewShape);
     }
+    if(keyInput == ' '){
+      currentShape->pos.y = previewShape->pos.y;
+    }
+}
+
+void setPreviewShape(Shape shape){
+    // loop though all cubes
+    for(int i = 0; i < 4; i++){
+        //check if it collides att bottom and upwards
+        for(int r = 0; r < HEIGHT-currentShape->pos.y; r++){
+            // if collides set the previewShape position
+            if( shape.cubes[i].y + shape.pos.y + r == HEIGHT-2 ||
+               collides(*currentShape,newPoint(0, r+1), fallenCubes,fallCount)){
+
+                previewShape->pos.x = currentShape->pos.x;
+                previewShape->pos.y = currentShape->pos.y+r;
+
+                for(int j = 0; j < 4; j ++){
+                  previewShape->cubes[j] = currentShape->cubes[j];
+                }
+
+                return;
+            }
+        }
+    }
+}
+
+int main(){
+  c = newCanvas(10,HEIGHT,"  ",WHITE,BG_BLACK);
+
+  c->x = termWidth()/2-5;
+  c->y = termHeight()/2-(HEIGHT/2);
+
+  previewShape = newShape(0,0,0);
+  currentShape = newShape(0,0,0);
+  currentShape->pos.x = 3;
+  currentShape->pos.y = 3;
+
+
+  int tick = 0;
+  while(1){
+    //check if there is a full row
+    fullRow();
+
+    movement(tick);
+
 
     if(tick % 10 == 0){
       currentShape->pos.y++;
     }
 
+    setPreviewShape(*currentShape);
+
+    //check if the currentShape has fallen down
     for(int i = 0; i < 4; i ++){
         if(currentShape->cubes[i].y+currentShape->pos.y >= HEIGHT-2 ||
            collides(*currentShape,newPoint(0,1),fallenCubes,fallCount)){
           newCurr();
         }
     }
-    render();
-    msleep(30);
+    renderWorld(c,currentShape,previewShape,fallenCubes,fallCount);
+    msleep(50);
     tick++;
   }
 

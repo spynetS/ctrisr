@@ -4,3 +4,4 @@
 - [ ] Pause menu
 - [ ] Speed up
 - [ ] Save and get shape
+- [ ] different canvases showing different things
