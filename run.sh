@@ -1,4 +1,4 @@
 #!/bin/bash
 
-gcc ../printer/src/Canvas.c ../printer/src/msc.c ./src/renderer.c ./src/shapes.c  ./src/config.c ./src/sound.c ./flagcer/flagser.c ./src/main.c -lm -lasound
+gcc ./src/main.c ./src/Shape.c ./src/render.c -L./lib/ -lcanvas -lm
 ./a.out

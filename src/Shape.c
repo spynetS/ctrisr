@@ -6,8 +6,17 @@
 #include "shapes.h"
 
 
+void freeShape(Shape* shape){
+
+  free(shape->pos.color);
+  for(int i = 0; i < 4; i++){
+    free(shape->cubes[i].color);
+  }
+  free(shape);
+
+}
 Point newPoint(int x, int y){
-    
+
     Point point;
     point.x = x;
     point.y = y;
@@ -16,10 +25,10 @@ Point newPoint(int x, int y){
 }
 
 Shape *newShape(int x, int y, int type){
-    
+
     Shape *shape = malloc(sizeof(Shape));
     shape->pos = newPoint(x,y);
-    
+
 
     //memset(shape->color, 0, sizeof(shape->color));
     //I
@@ -34,7 +43,7 @@ Shape *newShape(int x, int y, int type){
         }
     }
     //L
-    if(type == 1){
+    else if(type == 1){
         shape->cubes[0] = newPoint(-1,0);
         shape->cubes[1] = newPoint(0,0);
         shape->cubes[2] = newPoint(1,0);
@@ -43,9 +52,9 @@ Shape *newShape(int x, int y, int type){
             strcpy(shape->cubes[i].color, "\033[31m");
         }
     }
-    
+
     //J
-    if(type == 2){
+    else if(type == 2){
         shape->cubes[0] = newPoint(1,-1);
         shape->cubes[1] = newPoint(-1,0);
         shape->cubes[2] = newPoint(0,0);
@@ -55,7 +64,7 @@ Shape *newShape(int x, int y, int type){
         }
     }
     //t
-    if(type == 3){
+    else if(type == 3){
         shape->cubes[0] = newPoint(0,0);
         shape->cubes[1] = newPoint(-1,0);
         shape->cubes[2] = newPoint(0,1);
@@ -65,7 +74,7 @@ Shape *newShape(int x, int y, int type){
         }
     }
     //o
-    if(type == 4){
+    else if(type == 4){
         shape->cubes[0] = newPoint(0,0);
         shape->cubes[1] = newPoint(1,1);
         shape->cubes[2] = newPoint(0,1);
@@ -75,7 +84,7 @@ Shape *newShape(int x, int y, int type){
         }
     }
     //s
-    if(type == 5){
+    else if(type == 5){
         shape->cubes[0] = newPoint(-1,0);
         shape->cubes[1] = newPoint(0,0);
         shape->cubes[2] = newPoint(0,1);
@@ -85,11 +94,20 @@ Shape *newShape(int x, int y, int type){
         }
     }
     //z
-    if(type == 5){
+    else if(type == 5){
         shape->cubes[0] = newPoint(-1,1);
         shape->cubes[1] = newPoint(0,1);
         shape->cubes[2] = newPoint(1,0);
         shape->cubes[3] = newPoint(0,0);
+        for(int i = 0; i < 4; i++){
+            strcpy(shape->cubes[i].color, "\033[31m");
+        }
+    }
+    else {
+        shape->cubes[0] = newPoint(-100,1);
+        shape->cubes[1] = newPoint(100,1);
+        shape->cubes[2] = newPoint(100,0);
+        shape->cubes[3] = newPoint(100,0);
         for(int i = 0; i < 4; i++){
             strcpy(shape->cubes[i].color, "\033[31m");
         }
@@ -99,24 +117,24 @@ Shape *newShape(int x, int y, int type){
 /**
  *  nextStep = where to move the shape
  * */
-int collides(Shape currentShape,Point nextStep ,Point *fallenCubes, int fallenCount){
+int collides(Shape currentShape,Point nextStep ,Point **fallenCubes, int fallenCount){
     //update pos
     currentShape.pos.y += nextStep.y;
     currentShape.pos.x += nextStep.x;
-    
+
     for(int sc = 0; sc < 4; sc++){ // for every cube in currentShape shape cube
 
-        Point shapeCube = currentShape.cubes[sc]; 
-        if(shapeCube.y + currentShape.pos.y == 21) return 1; // hit the bottom
-        if(shapeCube.x + currentShape.pos.x <  -1) return 1;
-        if(shapeCube.x + currentShape.pos.x >  8) return 1;
+        Point shapeCube = currentShape.cubes[sc];
+        if(shapeCube.y + currentShape.pos.y == 22) return 1; // hit the bottom
+        if(shapeCube.x + currentShape.pos.x <  0) return 1;
+        if(shapeCube.x + currentShape.pos.x >  9) return 1;
 
         for(int fc = 0; fc < fallenCount; fc++){ // for every cube in fallenShape fallen cube
-            Point fallenCube = fallenCubes[fc]; //that cube
+            Point *fallenCube = fallenCubes[fc]; //that cube
 
             // if eny cube has the same pos it collides
-            if(fallenCube.x == shapeCube.x+currentShape.pos.x &&
-                    fallenCube.y == shapeCube.y+currentShape.pos.y){
+            if(fallenCube->x == shapeCube.x+currentShape.pos.x &&
+                    fallenCube->y == shapeCube.y+currentShape.pos.y){
                 return 1;
             }
         }
@@ -135,8 +153,8 @@ void rotate(Shape *shape){
     }
 }
 
-int rotateCollide(Shape shape,Point* fallenCubes,int count){
-    Shape *shape_p = &shape; 
+int rotateCollide(Shape shape,Point** fallenCubes,int count){
+    Shape *shape_p = &shape;
     rotate(shape_p);
     return collides(*shape_p, newPoint(0,0),fallenCubes, count);
 }
