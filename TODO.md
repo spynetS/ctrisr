@@ -8,3 +8,6 @@
 - [ ] Speed up
 - [x] Save and get shape
 - [x] different canvases showing different things
+- [ ] sound in different thread
+- [ ] check height before start and dont start if cant?
+- [ ] weird print outside the canvas `[]`

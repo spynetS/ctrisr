@@ -1,6 +1,7 @@
 #include "../lib/Canvas.h"
 #include "shapes.h"
 #include "render.h"
+#include "sound.h"
 #include <string.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -298,6 +299,7 @@ int main(){
   draw(startCanvas);
   setBorder(startCanvas,1);
 
+  msleep(40);
   char temp = getchar();
 
   int tick = 0;

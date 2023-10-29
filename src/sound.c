@@ -1,6 +1,6 @@
 #include <math.h>
 #include <pthread.h>
-#include "../../printer/src/Canvas.h"
+#include "../lib/Canvas.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <alsa/asoundlib.h>
@@ -141,7 +141,7 @@ int playMusic(){
 
 	note('a', 400, oct);
 	// ##############
-	printer_msleep(400);
+	msleep(400);
 	// ##############
 	five:
 	note('D', 400, oct);
@@ -180,7 +180,7 @@ int playMusic(){
 
 	note('a', 400, oct);
 	// ##############
-	printer_msleep(400);
+	msleep(400);
 	// ##############
 	//goto one;
 
