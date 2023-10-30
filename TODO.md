@@ -13,4 +13,14 @@
 - [ ] weird print outside the canvas `[]`
 - [x] make the first nextes random
 - [ ] rotate on side collide
+- [ ] when collide at 20 exit the game
+
+### Maybes
+
+- [ ] save score and show it in the start
+- [ ] settings where you can:
+    > toggle sound
+    > toggle speed up
+    > toggle hold
+
 
