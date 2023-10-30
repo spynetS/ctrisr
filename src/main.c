@@ -329,13 +329,6 @@ int main(){
     movement(tick);
     setPreviewShape(*currentShape);
 
-    //check if the currentShape has fallen down
-    for(int i = 0; i < 4; i ++){
-        if(currentShape->cubes[i].y+currentShape->pos.y >= HEIGHT ||
-           collides(*currentShape,newPoint(0,1),fallenCubes,fallCount)){
-          newCurr();
-        }
-    }
     // should not update if game is paused
     if(!paused){
       renderWorld(c,currentShape,previewShape,fallenCubes,fallCount);
@@ -349,6 +342,13 @@ int main(){
 
     msleep(50);
     tick++;
+    //check if the currentShape has fallen down
+    for(int i = 0; i < 4; i ++){
+        if(currentShape->cubes[i].y+currentShape->pos.y >= HEIGHT ||
+           collides(*currentShape,newPoint(0,1),fallenCubes,fallCount)){
+          newCurr();
+        }
+    }
   }
 
   return 0;
