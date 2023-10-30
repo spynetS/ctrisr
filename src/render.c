@@ -28,10 +28,10 @@ void setShape(Shape* currentShape, Canvas* c){
 
 void renderScore(Canvas* scoreCanvas,int score){
   clearPixels(scoreCanvas);
-  setText(scoreCanvas,0,0,"Score",WHITE,BG_BLACK);
+  setCenterText(scoreCanvas,scoreCanvas->width/2-1,0,"Score",WHITE,BG_BLACK);
   char sscore[10];
   sprintf(sscore,"%d",score);
-  setText(scoreCanvas,0,1,sscore,WHITE,BG_BLACK);
+  setCenterText(scoreCanvas,scoreCanvas->width/2-1,1,sscore,WHITE,BG_BLACK);
 
   draw(scoreCanvas);
   setBorder(scoreCanvas,1);
@@ -66,8 +66,8 @@ void renderWorld(Canvas* c, Shape* currentShape,Shape* previewShape, Point** fal
 
     setText(c,2,0,"CTRISR",WHITE,BG_BLACK);
     //draw shape
-    setShape(currentShape,c);
     setShapeWithChar(previewShape,c,"[]");
+    setShape(currentShape,c);
     //setAllFallen
     for(int i = 0; i < fallCount; i++){
       setCube(c,*fallenCubes[i]);

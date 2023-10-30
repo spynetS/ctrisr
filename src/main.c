@@ -255,9 +255,10 @@ int main(){
   //make so ctr+c will run the exit code
   signal(SIGINT, exitCtrisr);
 
-  next[0] = 0;
-  next[1] = 1;
-  next[2] = 2;
+  srand(time(NULL));
+  next[0] = (rand() % (5 - 0 + 1));
+  next[1] = (rand() % (5 - 0 + 1));
+  next[2] = (rand() % (5 - 0 + 1));
 
   c = newCanvas(11,HEIGHT+1,". ",WHITE,BG_BLACK);
   c->x = termWidth()/2-11;
@@ -275,7 +276,7 @@ int main(){
   pauseScreen->x = termWidth()/2-26/2;
   pauseScreen->y = termHeight()/2-(HEIGHT/2);
 
-  scoreCanvas = newCanvas(6,5,"  ",WHITE,BG_BLACK);
+  scoreCanvas = newCanvas(12,5," ",WHITE,BG_BLACK);
   scoreCanvas->x = termWidth()/2-24;
   scoreCanvas->y = termHeight()/2-(HEIGHT/2)+6 ;
 
