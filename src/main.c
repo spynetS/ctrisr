@@ -303,7 +303,6 @@ void splashScreen(){
   setCenterText(startCanvas,16,7,"Press any key to start the game",WHITE,BG_BLACK);
   draw(startCanvas);
   setBorder(startCanvas,1);
-
   msleep(40);
   char temp = getchar();
 }
