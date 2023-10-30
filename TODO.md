@@ -11,3 +11,5 @@
 - [ ] sound in different thread
 - [ ] check height before start and dont start if cant?
 - [ ] weird print outside the canvas `[]`
+- [ ] make the first nextes random
+
