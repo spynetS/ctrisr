@@ -250,15 +250,7 @@ void setPreviewShape(Shape shape){
     }
 }
 
-
-int main(){
-  //make so ctr+c will run the exit code
-  signal(SIGINT, exitCtrisr);
-
-  srand(time(NULL));
-  next[0] = (rand() % (5 - 0 + 1));
-  next[1] = (rand() % (5 - 0 + 1));
-  next[2] = (rand() % (5 - 0 + 1));
+void initCanvases(){
 
   c = newCanvas(11,HEIGHT+1,". ",WHITE,BG_BLACK);
   c->x = termWidth()/2-11;
@@ -283,6 +275,16 @@ int main(){
   startCanvas = newCanvas(34,10, " ",WHITE,BG_BLACK);
   startCanvas->x = termWidth()/2-32/2;
   startCanvas->y = termHeight()/2-(HEIGHT/2);
+}
+
+void initShapes(){
+
+
+  srand(time(NULL));
+  next[0] = (rand() % (5 - 0 + 1));
+  next[1] = (rand() % (5 - 0 + 1));
+  next[2] = (rand() % (5 - 0 + 1));
+
 
   savedShape = newShape(0,0,1000);
   previewShape = newShape(0,0,0);
@@ -290,6 +292,8 @@ int main(){
   currentShape->pos.x = 3;
   currentShape->pos.y = 3;
 
+}
+void splashScreen(){
   setCenterText(startCanvas,16,0,"CTRISR",WHITE,BG_BLACK);
   setCenterText(startCanvas,16,1,"Q to quit",WHITE,BG_BLACK);
   setCenterText(startCanvas,16,2,"E to hold",WHITE,BG_BLACK);
@@ -302,6 +306,16 @@ int main(){
 
   msleep(40);
   char temp = getchar();
+}
+
+int main(){
+  //make so ctr+c will run the exit code
+  signal(SIGINT, exitCtrisr);
+
+  initCanvases();
+  initShapes();
+
+  splashScreen();
 
   int tick = 0;
   while(1){
@@ -311,8 +325,8 @@ int main(){
     if(!paused && tick % 10 == 0){
       currentShape->pos.y++;
     }
-    movement(tick);
 
+    movement(tick);
     setPreviewShape(*currentShape);
 
     //check if the currentShape has fallen down
@@ -322,6 +336,7 @@ int main(){
           newCurr();
         }
     }
+    // should not update if game is paused
     if(!paused){
       renderWorld(c,currentShape,previewShape,fallenCubes,fallCount);
       renderScore(scoreCanvas,score);
