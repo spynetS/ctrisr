@@ -18,5 +18,3 @@ I move the cursor with terminal prints like
 * With the E key you can hold or get the holded shape.
 * The next 3 shapes are showed.
 
-### TODO
-[[TODO]]
