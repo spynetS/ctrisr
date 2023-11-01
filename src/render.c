@@ -66,8 +66,10 @@ void renderWorld(Canvas* c, Shape* currentShape,Shape* previewShape, Point** fal
 
     setText(c,2,0,"CTRISR",WHITE,BG_BLACK);
     //draw shape
-    setShapeWithChar(previewShape,c,"[]");
-    setShape(currentShape,c);
+    if (previewShape != NULL)
+      setShapeWithChar(previewShape,c,"[]");
+    if (currentShape != NULL)
+      setShape(currentShape,c);
     //setAllFallen
     for(int i = 0; i < fallCount; i++){
       setCube(c,*fallenCubes[i]);
@@ -76,5 +78,4 @@ void renderWorld(Canvas* c, Shape* currentShape,Shape* previewShape, Point** fal
     setBorder(c,1);
     draw(c);
     clearPixels(c);
-
 }

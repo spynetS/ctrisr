@@ -10,7 +10,7 @@
 - [x] different canvases showing different things
 - [ ] sound in different thread
 - [ ] check height of term before start and dont start if cant?
-- [ ] weird print outside the canvas `[]`
+- [x] weird print outside the canvas `[]`
 - [x] make the first nextes random
 - [ ] rotate on side collide
 - [ ] when collide at 20 exit the game

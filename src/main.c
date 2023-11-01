@@ -139,8 +139,8 @@ int fullRow(){
           fallenCubes[j]->y=100;
 
           clearPixels(c);
-          renderWorld(c,currentShape,previewShape,fallenCubes,fallCount);
-          msleep(40);
+          renderWorld(c,NULL,NULL,fallenCubes,fallCount);
+          msleep(20);
         }
       }
       removeRow(100);
