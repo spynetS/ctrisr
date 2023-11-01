@@ -25,6 +25,7 @@ int next[3]; // list containg the next shapes
 int paused = 0;
 int started = 0;
 int score = 0;
+int rowsRemoved = 0;
 
 Point* fallenCubes[22*10];
 int fallCount = 0;
@@ -75,7 +76,7 @@ void newCurr(){
     currentShape = newShape(4,1,next[0]);
     //update the next list
     srand(time(0));
-    int number = (rand() % (5 - 0 + 1)) + 0;
+    int number = (rand() % (6 - 0 + 1)) + 0;
     next[0] = next[1];
     next[1] = next[2];
     next[2] = number;
@@ -119,10 +120,11 @@ void dropAbove(int row){
 }
 
 void updateScore(int rows){
-    if(rows == 1) score += 40;
-    if(rows == 2) score += 100;
-    if(rows == 3) score += 300;
-    if(rows == 4) score += 1200;
+  rowsRemoved += rows;
+  if(rows == 1) score += 40;
+  if(rows == 2) score += 100;
+  if(rows == 3) score += 300;
+  if(rows == 4) score += 1200;
 }
 
 //checks if a row is full if so remove it and make the above go down
@@ -136,11 +138,24 @@ int fullRow(){
     if(count == 10){
       for(int j = 0; j < fallCount; j ++){
         if(fallenCubes[j]->y == i){
-          fallenCubes[j]->y=100;
+          //fallenCubes[j]->y=100;
 
           clearPixels(c);
-          renderWorld(c,NULL,NULL,fallenCubes,fallCount);
-          msleep(20);
+          // fade out the cube
+          for(int i = 0; i < fallCount; i++){
+            setCube(c,*fallenCubes[i]);
+          }
+          setCubeWithChar(c,*fallenCubes[j],"▓▓");
+          draw(c);
+          msleep(15);
+
+          for(int i = 0; i < fallCount; i++){
+            setCube(c,*fallenCubes[i]);
+          }
+          setCubeWithChar(c,*fallenCubes[j],"░░");
+          draw(c);
+          msleep(15);
+          fallenCubes[j]->y=100;
         }
       }
       removeRow(100);
@@ -171,14 +186,19 @@ void movement(int tick){
       if(!collides(*currentShape,newPoint(1,0),fallenCubes,fallCount))
         currentShape->pos.x++;
     }
+    if(keyInput == 's'){
+      if(!collides(*currentShape,newPoint(0,1),fallenCubes,fallCount))
+        currentShape->pos.y++;
+    }
     if(keyInput == 'a'){
       if(!collides(*currentShape,newPoint(-1,0),fallenCubes,fallCount))
         currentShape->pos.x--;
     }
     if(keyInput == 'w'){
-      if(!rotateCollide(*currentShape, fallenCubes,fallCount))
+      if(!rotateCollide(*currentShape, fallenCubes,fallCount)){
         rotate(currentShape);
         rotate(previewShape);
+      }
     }
     if(keyInput == 'p'){
       if(!paused){
@@ -226,6 +246,20 @@ void movement(int tick){
     }
     if(keyInput == ' '){
       currentShape->pos.y = previewShape->pos.y;
+
+      clearPixels(c);
+      for(int i = 0; i < fallCount; i++){
+        setCube(c,*fallenCubes[i]);
+      }
+
+      Shape temp = *currentShape;
+      for(int i = 0; i < 4; i ++){
+        temp.cubes[i].color = WHITE;
+      }
+      setShape(&temp,c);
+      draw(c);
+      msleep(150);
+
     }
 }
 
@@ -268,7 +302,7 @@ void initCanvases(){
   pauseScreen->x = termWidth()/2-26/2;
   pauseScreen->y = termHeight()/2-(HEIGHT/2);
 
-  scoreCanvas = newCanvas(12,5," ",WHITE,BG_BLACK);
+  scoreCanvas = newCanvas(12,6," ",WHITE,BG_BLACK);
   scoreCanvas->x = termWidth()/2-24;
   scoreCanvas->y = termHeight()/2-(HEIGHT/2)+6 ;
 
@@ -331,7 +365,7 @@ int main(){
     // should not update if game is paused
     if(!paused){
       renderWorld(c,currentShape,previewShape,fallenCubes,fallCount);
-      renderScore(scoreCanvas,score);
+      renderScore(scoreCanvas,score,rowsRemoved);
 
       renderNext(nextCanvas,next);
       clearPixels(savedCanvas);

@@ -5,8 +5,11 @@
 char* PIXEL = "██";
 
 // RENDER FUNCTIONS
+void setCubeWithChar(Canvas *c, Point cube,char* pixel){
+  setPixel(c, cube.x, cube.y, pixel, cube.color,BG_BLACK);
+}
 void setCube(Canvas *c, Point cube){
-  setPixel(c, cube.x, cube.y, PIXEL, cube.color,BG_BLACK);
+  setCubeWithChar(c,cube,PIXEL);
 }
 void setShapeWithChar(Shape* currentShape, Canvas* c, char* pixel){
 
@@ -26,12 +29,17 @@ void setShape(Shape* currentShape, Canvas* c){
   }
 }
 
-void renderScore(Canvas* scoreCanvas,int score){
+void renderScore(Canvas* scoreCanvas,int score,int rows){
   clearPixels(scoreCanvas);
   setCenterText(scoreCanvas,scoreCanvas->width/2-1,0,"Score",WHITE,BG_BLACK);
   char sscore[10];
   sprintf(sscore,"%d",score);
   setCenterText(scoreCanvas,scoreCanvas->width/2-1,1,sscore,WHITE,BG_BLACK);
+
+  setCenterText(scoreCanvas,scoreCanvas->width/2-1,3,"Lines",WHITE,BG_BLACK);
+  //char srows[10];
+  sprintf(sscore,"%d",rows);
+  setCenterText(scoreCanvas,scoreCanvas->width/2-1,4,sscore,WHITE,BG_BLACK);
 
   draw(scoreCanvas);
   setBorder(scoreCanvas,1);

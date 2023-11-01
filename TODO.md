@@ -14,6 +14,11 @@
 - [x] make the first nextes random
 - [ ] rotate on side collide
 - [ ] when collide at 20 exit the game
+- [ ] show how many lines have been removed
+- [ ] add s to go down
+- [ ] add score when s
+- [ ] fix sqaure rotate
+- [ ]
 
 ### Maybes
 

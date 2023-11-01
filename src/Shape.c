@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "shapes.h"
+#include "../lib/Canvas.h"
 
 
 void freeShape(Shape* shape){
@@ -33,7 +34,7 @@ Shape *newShape(int x, int y, int type){
     //memset(shape->color, 0, sizeof(shape->color));
     //I
     shape->type = type;
-    if(type == 0 || type == 6){
+    if(type == 0 ){
         shape->cubes[0] = newPoint(-1,0);
         shape->cubes[1] = newPoint(0,0);
         shape->cubes[2] = newPoint(1,0);
@@ -94,13 +95,13 @@ Shape *newShape(int x, int y, int type){
         }
     }
     //z
-    else if(type == 5){
+    else if(type == 6){
         shape->cubes[0] = newPoint(-1,1);
         shape->cubes[1] = newPoint(0,1);
         shape->cubes[2] = newPoint(1,0);
         shape->cubes[3] = newPoint(0,0);
         for(int i = 0; i < 4; i++){
-            strcpy(shape->cubes[i].color, "\033[31m");
+            strcpy(shape->cubes[i].color, RED);
         }
     }
     else {
@@ -144,12 +145,15 @@ int collides(Shape currentShape,Point nextStep ,Point **fallenCubes, int fallenC
 }
 
 void rotate(Shape *shape){
-    for(int i = 0; i < 4; i++){
-        Point *cube = &shape->cubes[i];
+    // the o cant be rotated
+    if(shape->type != 4){
+        for(int i = 0; i < 4; i++){
+            Point *cube = &shape->cubes[i];
 
-        int x_temp = -cube->y;
-        cube->y =  cube->x;
-        cube->x =  x_temp;
+            int x_temp = -cube->y;
+            cube->y =  cube->x;
+            cube->x =  x_temp;
+        }
     }
 }
 
