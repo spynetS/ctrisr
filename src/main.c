@@ -330,6 +330,7 @@ void initShapes(){
   currentShape->pos.y = 3;
 
 }
+
 void splashScreen(){
   setCenterText(startCanvas,16,0,"CTRISR",WHITE,BG_BLACK);
   setCenterText(startCanvas,16,1,"Q to quit",WHITE,BG_BLACK);
