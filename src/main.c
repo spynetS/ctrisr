@@ -30,6 +30,9 @@ int rowsRemoved = 0;
 Point* fallenCubes[22*10];
 int fallCount = 0;
 
+
+void setPreviewShape(Shape shape);
+
 // -- LOGIC FUNCTIONS --
 
 void exitCtrisr(int signal){
@@ -259,7 +262,7 @@ void movement(int tick){
       setShape(&temp,c);
       draw(c);
       msleep(150);
-
+      newCurr();
     }
 }
 
