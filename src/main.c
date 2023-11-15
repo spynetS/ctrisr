@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include "saver.h"
 
 int HEIGHT = 22;
 Canvas* c;
@@ -30,6 +31,9 @@ int rowsRemoved = 0;
 Point* fallenCubes[22*10];
 int fallCount = 0;
 
+char* path = "/home/spy/dev/c/ctrisr/highscore.txt";
+FILE* highscoreFile;
+int highscore;
 
 void setPreviewShape(Shape shape);
 
@@ -38,6 +42,11 @@ void setPreviewShape(Shape shape);
 void exitCtrisr(int signal){
     system("clear");
     printf(SHOW_CURSOR);
+
+    printf("%d\n",score);
+    save_highscore(highscoreFile,score);
+    close_file(highscoreFile);
+
     //free the canvases
     freeCanvas(c);
     freeCanvas(savedCanvas);
@@ -55,6 +64,7 @@ void exitCtrisr(int signal){
     freeShape(currentShape);
     freeShape(previewShape);
     freeShape(savedShape);
+
 
     exit(0);
 }
@@ -305,7 +315,7 @@ void initCanvases(){
   pauseScreen->x = termWidth()/2-26/2;
   pauseScreen->y = termHeight()/2-(HEIGHT/2);
 
-  scoreCanvas = newCanvas(12,6," ",WHITE,BG_BLACK);
+  scoreCanvas = newCanvas(12,7," ",WHITE,BG_BLACK);
   scoreCanvas->x = termWidth()/2-24;
   scoreCanvas->y = termHeight()/2-(HEIGHT/2)+6 ;
 
@@ -349,6 +359,12 @@ int main(){
   //make so ctr+c will run the exit code
   signal(SIGINT, exitCtrisr);
 
+  highscoreFile = open_file(path);
+  int test;
+  get_highscore(highscoreFile,&test);
+  printf("%d\n",test);
+  exit(0);
+
   initCanvases();
   initShapes();
 
@@ -369,7 +385,7 @@ int main(){
     // should not update if game is paused
     if(!paused){
       renderWorld(c,currentShape,previewShape,fallenCubes,fallCount);
-      renderScore(scoreCanvas,score,rowsRemoved);
+      renderScore(scoreCanvas,score,highscore,rowsRemoved);
 
       renderNext(nextCanvas,next);
       clearPixels(savedCanvas);
