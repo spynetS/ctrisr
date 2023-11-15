@@ -44,8 +44,7 @@ void exitCtrisr(int signal){
     printf(SHOW_CURSOR);
 
     printf("%d\n",score);
-    save_highscore(highscoreFile,score);
-    close_file(highscoreFile);
+    save_highscore(path,score);
 
     //free the canvases
     freeCanvas(c);
@@ -138,6 +137,7 @@ void updateScore(int rows){
   if(rows == 2) score += 100;
   if(rows == 3) score += 300;
   if(rows == 4) score += 1200;
+  if(score > highscore) highscore = score;
 }
 
 //checks if a row is full if so remove it and make the above go down
@@ -359,11 +359,7 @@ int main(){
   //make so ctr+c will run the exit code
   signal(SIGINT, exitCtrisr);
 
-  highscoreFile = open_file(path);
-  int test;
-  get_highscore(highscoreFile,&test);
-  printf("%d\n",test);
-  exit(0);
+  get_highscore(path,&highscore);
 
   initCanvases();
   initShapes();

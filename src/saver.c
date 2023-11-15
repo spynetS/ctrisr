@@ -21,33 +21,29 @@
 #include "saver.h"
 
 
-int close_file(FILE* file){
-   fclose(file);
-   return 1;
-}
-FILE* open_file(const char* path){
-   // use appropriate location if you are using MacOS or Linux
+int save_highscore(const char* path,const int score){
   FILE* file;
   file = fopen(path,"w");
 
   if(file == NULL)
   {
      printf("Error!");
-     return NULL;
+     return 0;
   }
-  return file;
+  fprintf(file,"%d",score);
+  fclose(file);
+  return 1;
 }
+int get_highscore(const char* path, int *score){
+  FILE* file;
+  file = fopen(path,"r");
 
-int save_highscore(FILE* file, const int score){
-  return fprintf(file,"%d",score);
-}
-int create_highscore(FILE* file){
-  return 0;
-}
-int get_highscore(FILE* file, int *score){
-  int tmp;
-  fscanf(file,"%d",&tmp);
-  printf("%d\n",tmp);
-  *score = tmp;
+  if(file == NULL)
+  {
+     printf("Error!");
+     return 0;
+  }
+  fscanf(file,"%d",score);
+  fclose(file);
   return 1;
 }

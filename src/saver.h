@@ -5,11 +5,8 @@
 #include <stdlib.h>
 
 
-int save_highscore(FILE* file,const int score);
-int create_highscore(FILE* file);
-int get_highscore(FILE* file, int *score);
-FILE* open_file(const char* path);
-int close_file(FILE* file);
+int save_highscore(const char* path,const int score);
+int get_highscore(const char* path, int *score);
 
 
 #endif // SAVER_H_
