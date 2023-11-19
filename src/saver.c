@@ -38,9 +38,9 @@ int get_highscore(const char* path, int *score){
   FILE* file;
   file = fopen(path,"r");
 
+
   if(file == NULL)
   {
-     printf("Error!");
      return 0;
   }
   fscanf(file,"%d",score);

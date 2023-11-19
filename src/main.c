@@ -31,7 +31,7 @@ int rowsRemoved = 0;
 Point* fallenCubes[22*10];
 int fallCount = 0;
 
-char* path = "/home/spy/dev/c/ctrisr/highscore.txt";
+char* path ;
 FILE* highscoreFile;
 int highscore;
 
@@ -44,7 +44,7 @@ void exitCtrisr(int signal){
     printf(SHOW_CURSOR);
 
     printf("%d\n",score);
-    save_highscore(path,score);
+    save_highscore(path,highscore);
 
     //free the canvases
     freeCanvas(c);
@@ -64,6 +64,7 @@ void exitCtrisr(int signal){
     freeShape(previewShape);
     freeShape(savedShape);
 
+    free(path);
 
     exit(0);
 }
@@ -358,7 +359,11 @@ void splashScreen(){
 int main(){
   //make so ctr+c will run the exit code
   signal(SIGINT, exitCtrisr);
+  path = malloc(sizeof(char)*30);
+  strcpy(path,getenv("HOME"));
+  strcat(path,"/.config/ctrisr-highscore.txt");
 
+  printf("%s\n",path);
   get_highscore(path,&highscore);
 
   initCanvases();
