@@ -29,17 +29,21 @@ void setShape(Shape* currentShape, Canvas* c){
   }
 }
 
-void renderScore(Canvas* scoreCanvas,int score,int rows){
+void renderScore(Canvas* scoreCanvas,int score,int highscore,int rows){
   clearPixels(scoreCanvas);
-  setCenterText(scoreCanvas,scoreCanvas->width/2-1,0,"Score",WHITE,BG_BLACK);
+  setCenterText(scoreCanvas,scoreCanvas->width/2-1,0,"Highscore",WHITE,BG_BLACK);
   char sscore[10];
-  sprintf(sscore,"%d",score);
+  sprintf(sscore,"%d",highscore);
   setCenterText(scoreCanvas,scoreCanvas->width/2-1,1,sscore,WHITE,BG_BLACK);
 
-  setCenterText(scoreCanvas,scoreCanvas->width/2-1,3,"Lines",WHITE,BG_BLACK);
+  setCenterText(scoreCanvas,scoreCanvas->width/2-1,2,"Score",WHITE,BG_BLACK);
+  sprintf(sscore,"%d",score);
+  setCenterText(scoreCanvas,scoreCanvas->width/2-1,3,sscore,WHITE,BG_BLACK);
+
+  setCenterText(scoreCanvas,scoreCanvas->width/2-1,4,"Lines",WHITE,BG_BLACK);
   //char srows[10];
   sprintf(sscore,"%d",rows);
-  setCenterText(scoreCanvas,scoreCanvas->width/2-1,4,sscore,WHITE,BG_BLACK);
+  setCenterText(scoreCanvas,scoreCanvas->width/2-1,5,sscore,WHITE,BG_BLACK);
 
   draw(scoreCanvas);
   setBorder(scoreCanvas,1);

@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include "saver.h"
 
 int HEIGHT = 22;
 Canvas* c;
@@ -30,6 +31,9 @@ int rowsRemoved = 0;
 Point* fallenCubes[22*10];
 int fallCount = 0;
 
+char* path ;
+FILE* highscoreFile;
+int highscore;
 
 void setPreviewShape(Shape shape);
 
@@ -38,6 +42,10 @@ void setPreviewShape(Shape shape);
 void exitCtrisr(int signal){
     system("clear");
     printf(SHOW_CURSOR);
+
+    printf("%d\n",score);
+    save_highscore(path,highscore);
+
     //free the canvases
     freeCanvas(c);
     freeCanvas(savedCanvas);
@@ -55,6 +63,8 @@ void exitCtrisr(int signal){
     freeShape(currentShape);
     freeShape(previewShape);
     freeShape(savedShape);
+
+    free(path);
 
     exit(0);
 }
@@ -128,6 +138,7 @@ void updateScore(int rows){
   if(rows == 2) score += 100;
   if(rows == 3) score += 300;
   if(rows == 4) score += 1200;
+  if(score > highscore) highscore = score;
 }
 
 //checks if a row is full if so remove it and make the above go down
@@ -305,7 +316,7 @@ void initCanvases(){
   pauseScreen->x = termWidth()/2-26/2;
   pauseScreen->y = termHeight()/2-(HEIGHT/2);
 
-  scoreCanvas = newCanvas(12,6," ",WHITE,BG_BLACK);
+  scoreCanvas = newCanvas(12,7," ",WHITE,BG_BLACK);
   scoreCanvas->x = termWidth()/2-24;
   scoreCanvas->y = termHeight()/2-(HEIGHT/2)+6 ;
 
@@ -348,6 +359,12 @@ void splashScreen(){
 int main(){
   //make so ctr+c will run the exit code
   signal(SIGINT, exitCtrisr);
+  path = malloc(sizeof(char)*30);
+  strcpy(path,getenv("HOME"));
+  strcat(path,"/.config/ctrisr-highscore.txt");
+
+  printf("%s\n",path);
+  get_highscore(path,&highscore);
 
   initCanvases();
   initShapes();
@@ -369,7 +386,7 @@ int main(){
     // should not update if game is paused
     if(!paused){
       renderWorld(c,currentShape,previewShape,fallenCubes,fallCount);
-      renderScore(scoreCanvas,score,rowsRemoved);
+      renderScore(scoreCanvas,score,highscore,rowsRemoved);
 
       renderNext(nextCanvas,next);
       clearPixels(savedCanvas);
