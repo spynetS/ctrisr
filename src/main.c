@@ -151,23 +151,6 @@ int fullRow(){
     if(count == 10){
       for(int j = 0; j < fallCount; j ++){
         if(fallenCubes[j]->y == i){
-          //fallenCubes[j]->y=100;
-
-          clearPixels(c);
-          // fade out the cube
-          for(int i = 0; i < fallCount; i++){
-            setCube(c,*fallenCubes[i]);
-          }
-          setCubeWithChar(c,*fallenCubes[j],"▓▓");
-          draw(c);
-          msleep(15);
-
-          for(int i = 0; i < fallCount; i++){
-            setCube(c,*fallenCubes[i]);
-          }
-          setCubeWithChar(c,*fallenCubes[j],"░░");
-          draw(c);
-          msleep(15);
           fallenCubes[j]->y=100;
         }
       }
