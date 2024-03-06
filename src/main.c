@@ -43,8 +43,7 @@ void exitCtrisr(int signal){
     system("clear");
     printf(SHOW_CURSOR);
 
-    printf("%d\n",score);
-    save_highscore(path,highscore);
+    printf("%d\n",score); save_highscore(path,highscore);
 
     //free the canvases
     freeCanvas(c);
