@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "shapes.h"
-#include "../lib/Canvas.h"
+#include "../lib/printer.h"
 
 
 void freeShape(Shape* shape){

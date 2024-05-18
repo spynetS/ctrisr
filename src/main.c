@@ -1,4 +1,4 @@
-#include "../lib/Canvas.h"
+#include "../lib/printer.h"
 #include "shapes.h"
 #include "render.h"
 #include "sound.h"
@@ -73,7 +73,7 @@ void newCurr(){
     for(int i = 0; i < 4; i++){
       int x = currentShape->cubes[i].x+currentShape->pos.x;
       int y = currentShape->cubes[i].y+currentShape->pos.y;
-      Point *cube = malloc(sizeof(Point));
+      Point *cube = (Point *) malloc(sizeof(Point));
       cube->x=x;
       cube->y=y;
       cube->color = malloc(sizeof(char)*11);
@@ -282,8 +282,8 @@ void setPreviewShape(Shape shape){
 
 void initCanvases(){
 
-  c = newCanvas(11,HEIGHT+1,". ",WHITE,BG_BLACK);
-  c->x = termWidth()/2-11;
+  c = newCanvas(10,HEIGHT,". ",WHITE,BG_BLACK);
+  c->x = termWidth()/2-10;
   c->y = termHeight()/2-(HEIGHT/2);
 
   savedCanvas = newCanvas(6,5,"  ",WHITE,BG_BLACK);
@@ -300,7 +300,7 @@ void initCanvases(){
 
   scoreCanvas = newCanvas(12,7," ",WHITE,BG_BLACK);
   scoreCanvas->x = termWidth()/2-24;
-  scoreCanvas->y = termHeight()/2-(HEIGHT/2)+6 ;
+  scoreCanvas->y = termHeight()/2-(HEIGHT/2)+7 ;
 
   startCanvas = newCanvas(34,10, " ",WHITE,BG_BLACK);
   startCanvas->x = termWidth()/2-32/2;

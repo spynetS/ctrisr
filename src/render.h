@@ -1,7 +1,7 @@
 #ifndef RENDER_H_
 #define RENDER_H_
 
-#include "../lib/Canvas.h"
+#include "../lib/printer.h"
 #include "shapes.h"
 
 

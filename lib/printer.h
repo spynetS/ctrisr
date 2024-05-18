@@ -148,7 +148,10 @@ void clearPixels(Canvas *canvas);
 /** sets the pixel at x,y with the data */
 void setPixel(Canvas *canvas, int _x, int _y, char* ch, char* color, char* bgcolor);
 void setPixelRaw(Canvas *canvas, int _x, int _y, char* ch, char* color, char* bgcolor);
-/** set the pixel with the pixel arg */
+
+/** set the pixel with the pixel arg
+ *  REMEMBER TO FREE IT YOURSELF
+ * */
 void setPixelWithPixel(Canvas *canvas, Pixel *pixel);
 /** Sets the text at begining of x and at row y */
 void setText(Canvas *canvas, int _x, int _y, char* text, char* color, char* bgcolor);
@@ -169,8 +172,13 @@ Pixel *newPixel(int x, int y, char* ch, char* color, char* bgcolor);
 /** returns new canvas with the data */
 Canvas *newCanvas(int width, int height, char* bgCh, char* color, char* bgcolor);
 
-// THIS SHOULD BE RUN AFTER THE DRAW
+// DEPRICATED USE DRAW BORDER INSTEAD (just new name tbh)
 void setBorder(Canvas *canvas,int borderWith);
+
+// THIS SHOULD BE RUN AFTER THE DRAW FUNCTION
+// if the canvas is at x,y=0 set it to be x,y=1 canvas->x = 1...
+// TODO borderwdth change borderwidth (does noting now)
+void drawBorder(Canvas *canvas,int borderWith);
 
 //mcs.c
 int kbhit(void); //returns 1 if key was pressed

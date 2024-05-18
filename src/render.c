@@ -1,4 +1,4 @@
-#include "../lib/Canvas.h"
+#include "../lib/printer.h"
 #include <stdio.h>
 #include "shapes.h"
 //char* PIXEL = "⬜";

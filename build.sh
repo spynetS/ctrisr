@@ -1,1 +1,1 @@
-gcc ./src/main.c ./src/saver.c ./src/Shape.c ./src/render.c ./src/sound.c -L./lib/ -lcanvas -lm -lasound -o ctrisr
+gcc -Wall -pedantic ./src/main.c ./src/saver.c ./src/Shape.c ./src/render.c ./src/sound.c ./lib/Canvas.c ./lib/msc.c -lm -lasound -o ctrisr
