@@ -112,7 +112,6 @@ int playMusic(){
 	note('C', 200, oct);
 	note('b', 200, oct);
 	// ##############
-	two:
 	note('a', 400, oct);
 
 	note('a', 200, oct);
@@ -123,7 +122,6 @@ int playMusic(){
 	note('D', 200, oct);
 	note('C', 200, oct);
 	// ##############
-	three:
 	note('b', 400, oct);
 
 	note('b', 200, oct);
@@ -133,7 +131,6 @@ int playMusic(){
 
 	note('E', 400, oct);
 	// ##############
-	four:
 
 	note('C', 400, oct);
 
@@ -143,7 +140,6 @@ int playMusic(){
 	// ##############
 	msleep(400);
 	// ##############
-	five:
 	note('D', 400, oct);
 
 	note('F', 200, oct);
@@ -153,7 +149,6 @@ int playMusic(){
 	note('G', 200, oct);
 	note('F', 200, oct);
 	// ##############
-	six:
 	note('E', 600, oct);
 
 	note('C', 200, oct);
@@ -163,7 +158,6 @@ int playMusic(){
 	note('D', 200, oct);
 	note('C', 200, oct);
 	// ##############
-	seven:
 	note('b', 400, oct);
 
 	note('b', 200, oct);
@@ -173,7 +167,6 @@ int playMusic(){
 
 	note('E', 400, oct);
 	// ##############
-	eight:
 	note('C', 400, oct);
 
 	note('a', 400, oct);

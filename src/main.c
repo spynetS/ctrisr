@@ -331,11 +331,12 @@ void splashScreen(){
   setCenterText(startCanvas,16,3,"W to rotate",WHITE,BG_BLACK);
   setCenterText(startCanvas,16,4,"AD to go sideways",WHITE,BG_BLACK);
   setCenterText(startCanvas,16,5,"SPACE to place at bottom",WHITE,BG_BLACK);
-  setCenterText(startCanvas,16,7,"Press any key to start the game",WHITE,BG_BLACK);
+  setCenterText(startCanvas,16,7,"Press enter to start the game",WHITE,BG_BLACK);
   draw(startCanvas);
   setBorder(startCanvas,1);
   msleep(40);
-  char temp = getchar();
+  // wait for input
+  getchar();
 }
 
 int main(){
