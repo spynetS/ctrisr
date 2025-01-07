@@ -1,0 +1,5 @@
+
+: foreach ./lib/*.c |> gcc -Wall -lm -c %f -o %o |> %B.o
+: foreach ./flagcer/*.c |> gcc -Wall -lm -c %f -o %o |> %B.o
+: foreach ./src/*.c |> gcc -Wall -lm  -c %f -o %o |> %B.o
+: *.o |> gcc -lm -lasound %f -o %o |> ctrisr
